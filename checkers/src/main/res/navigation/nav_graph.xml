@@ -9,17 +9,6 @@
         android:id="@+id/mainFragment"
         android:name="pl.org.seva.myapplication.main.MainFragment"
         tools:layout="@layout/fr_main"
-        android:label="@string/first_label">
-        <action
-            android:id="@+id/action_mainFragment_to_secondFragment"
-            app:destination="@id/secondFragment"/>
-    </fragment>
-
-    <fragment
-        android:id="@+id/secondFragment"
-        android:name="pl.org.seva.myapplication.main.SecondFragment"
-        android:label="@string/second_label"
-        tools:layout="@layout/fr_second">
-    </fragment>
+        android:label="@string/first_label"/>
 
 </navigation>
