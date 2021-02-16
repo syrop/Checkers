@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.main.init
+package pl.org.seva.checkers.main.init
 
 import android.content.Context
 import android.os.Build

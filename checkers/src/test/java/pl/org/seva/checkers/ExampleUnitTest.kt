@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication
+package pl.org.seva.checkers
 
 import org.junit.Test
 

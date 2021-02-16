@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.main.extension
+package pl.org.seva.checkers.main.extension
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData

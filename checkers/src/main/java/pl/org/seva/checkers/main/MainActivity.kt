@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.main
+package pl.org.seva.checkers.main
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.ac_main.*
-import pl.org.seva.myapplication.R
+import pl.org.seva.checkers.R
 
 class MainActivity : AppCompatActivity() {
 

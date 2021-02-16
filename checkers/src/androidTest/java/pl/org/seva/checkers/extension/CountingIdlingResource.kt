@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.extension
+package pl.org.seva.checkers.extension
 
 import androidx.test.espresso.idling.CountingIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi

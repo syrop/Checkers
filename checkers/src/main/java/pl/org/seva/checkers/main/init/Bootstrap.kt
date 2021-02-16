@@ -1,8 +1,8 @@
-package pl.org.seva.myapplication.main.init
+package pl.org.seva.checkers.main.init
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import pl.org.seva.myapplication.main.createNotificationChannels
+import pl.org.seva.checkers.main.createNotificationChannels
 
 
 class Bootstrap {

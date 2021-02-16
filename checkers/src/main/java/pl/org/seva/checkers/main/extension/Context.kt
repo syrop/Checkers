@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.main.extension
+package pl.org.seva.checkers.main.extension
 
 import android.content.Context
 import android.content.SharedPreferences

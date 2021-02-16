@@ -1,4 +1,4 @@
-package pl.org.seva.myapplication.main.init
+package pl.org.seva.checkers.main.init
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel

@@ -1,13 +1,13 @@
-package pl.org.seva.myapplication.main
+package pl.org.seva.checkers.main
 
 import android.app.Application
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.conf.global
-import pl.org.seva.myapplication.main.init.Bootstrap
-import pl.org.seva.myapplication.main.init.KodeinModuleBuilder
-import pl.org.seva.myapplication.main.init.instance
+import pl.org.seva.checkers.main.init.Bootstrap
+import pl.org.seva.checkers.main.init.KodeinModuleBuilder
+import pl.org.seva.checkers.main.init.instance
 
 @Suppress("unused")
 class MyApplication : Application() {

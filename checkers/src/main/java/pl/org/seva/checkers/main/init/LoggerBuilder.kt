@@ -1,6 +1,6 @@
-package pl.org.seva.myapplication.main.init
+package pl.org.seva.checkers.main.init
 
-import pl.org.seva.myapplication.BuildConfig
+import pl.org.seva.checkers.BuildConfig
 import java.util.logging.Logger
 
 fun logger(tag: String) =
