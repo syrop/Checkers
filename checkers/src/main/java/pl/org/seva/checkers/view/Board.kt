@@ -22,8 +22,9 @@ class Board(context: Context, attrs: AttributeSet) : View(context, attrs) {
             val dy = bottom / 8f
             repeat(8) { x ->
                 repeat(8) { y ->
-                    if (x % 2 != y % 2)
-                    drawRect(x * dx, y * dy, (x + 1) * dx, (y + 1) * dy, fill)
+                    if (x % 2 != y % 2) {
+                        drawRect(x * dx, y * dy, (x + 1) * dx, (y + 1) * dy, fill)
+                    }
                 }
             }
         }
