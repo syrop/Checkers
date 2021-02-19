@@ -5,19 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import kotlinx.android.synthetic.main.ac_main.*
 import pl.org.seva.checkers.R
+import pl.org.seva.checkers.databinding.AcMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private val navController by lazy { findNavController(R.id.nav_host_fragment) }
 
+    private lateinit var binding: AcMainBinding
+
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.ac_main)
-        setSupportActionBar(toolbar)
+        binding = AcMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }
 
