@@ -1,32 +1,30 @@
-package pl.org.seva.checkers.main
+package pl.org.seva.checkers.game
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
-import pl.org.seva.checkers.databinding.FrMainBinding
+import pl.org.seva.checkers.databinding.FrGameBinding
 
-class MainFragment : Fragment(R.layout.fr_main) {
+class GameFragment : Fragment(R.layout.fr_game) {
 
-    private var _binding: FrMainBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FrGameBinding
+    private val viewModel by viewModels<GameVM>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FrMainBinding.inflate(inflater, container, false)
+        binding = FrGameBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

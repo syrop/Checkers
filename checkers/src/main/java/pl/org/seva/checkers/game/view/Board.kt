@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.view
+package pl.org.seva.checkers.game.view
 
 import android.content.Context
 import android.graphics.Canvas

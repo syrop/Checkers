@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+<data>
+
+    <import type="android.view.View" />
+
+    <variable
+        name="viewModel"
+        type="pl.org.seva.checkers.game.GameVM"
+        />
+</data>
+
+<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <pl.org.seva.checkers.game.view.Board
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <pl.org.seva.checkers.game.view.Pieces
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:white_men="a"
+        app:black_men="b"/>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:text="@{viewModel.whiteMenFlow}"/>
+
+</RelativeLayout>
+</layout>
