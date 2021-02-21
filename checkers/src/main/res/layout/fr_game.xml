@@ -22,12 +22,7 @@
     <pl.org.seva.checkers.game.view.Pieces
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        data="@{viewModel.gameData}"/>
-
-  <TextView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:text=""/>
+        data="@{viewModel.dataFlow}"/>
 
 </RelativeLayout>
 </layout>
