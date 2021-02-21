@@ -1,6 +1,0 @@
-<resources>
-  <declare-styleable name="game">
-    <attr name="white_men" format="string" />
-    <attr name="black_men" format="string" />
-  </declare-styleable>
-</resources>

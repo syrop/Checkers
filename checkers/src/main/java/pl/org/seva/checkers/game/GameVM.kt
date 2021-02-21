@@ -3,18 +3,13 @@ package pl.org.seva.checkers.game
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import pl.org.seva.checkers.game.view.Position
 
 class GameVM : ViewModel() {
 
-    private val whiteMen = Position(whiteStartPosition)
-    private val blackMen = Position(blackStartPosition)
+    private val _dataFlow = MutableStateFlow(GameData(whiteStartPosition, blackStartPosition))
+    val dataFlow: StateFlow<GameData> = _dataFlow
 
-    private val _whiteMenFlow = MutableStateFlow(whiteMen.toString())
-    val whiteMenFlow = "a" //: StateFlow<String> = _whiteMenFlow
-
-    private val _blackMenFlow = MutableStateFlow(blackMen.toString())
-    val blackMenFlow = "b" //: StateFlow<String> = _blackMenFlow
+    val gameData = GameData(whiteStartPosition, blackStartPosition)
 
     companion object {
         val whiteStartPosition = arrayListOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)

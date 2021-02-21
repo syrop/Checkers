@@ -2,13 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
 <data>
-
-    <import type="android.view.View" />
-
     <variable
         name="viewModel"
         type="pl.org.seva.checkers.game.GameVM"
@@ -26,13 +22,12 @@
     <pl.org.seva.checkers.game.view.Pieces
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:white_men="a"
-        app:black_men="b"/>
+        data="@{viewModel.gameData}"/>
 
   <TextView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:text="@{viewModel.whiteMenFlow}"/>
+      android:text=""/>
 
 </RelativeLayout>
 </layout>
