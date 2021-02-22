@@ -15,6 +15,8 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var blacks = emptyList<Pair<Int, Int>>()
 
+    private var moving = -1 to -1
+
     private val whiteFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.GREEN
         style = Paint.Style.FILL
@@ -28,8 +30,13 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
     fun setGameState(state: GameState) {
         whites = state.whiteMen
         blacks = state.blackMen
+        moving = state.moving
         invalidate()
     }
+
+    fun getX(x: Float) = x.toInt() * 8 / measuredWidth
+
+    fun getY(y: Float) = y.toInt() * 8 / measuredHeight - 1
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -43,6 +50,9 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
             }
             for (piece in blacks) {
                 drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, blackFill)
+            }
+            if (moving != -1 to -1) {
+                drawCircle(moving.first.toFloat(), moving.second.toFloat() - dy, radius, whiteFill)
             }
         }
     }
