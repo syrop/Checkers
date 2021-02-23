@@ -14,9 +14,10 @@ import pl.org.seva.checkers.databinding.FrGameBinding
 class GameFragment : Fragment(R.layout.fr_game) {
 
     private lateinit var binding: FrGameBinding
-    private val viewModel by viewModels<GameVM>()
+    private val vm by viewModels<GameVM>()
 
-    var inMovement = false
+    var isInMovement = false
+    var pickedFrom = -1 to -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,7 +26,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
     ): View {
         binding = FrGameBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        binding.viewModel = viewModel
+        binding.viewModel = vm
         return binding.root
     }
 
@@ -33,18 +34,25 @@ class GameFragment : Fragment(R.layout.fr_game) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.pieces.setOnTouchListener { _, event ->
             when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
+                MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
-                    inMovement = viewModel.removeWhite(x, y)
+                    pickedFrom = x to y
+                    isInMovement = vm.removeWhite(x, y)
                 }
-                MotionEvent.ACTION_MOVE -> if (inMovement) {
-                    viewModel.moveTo(event.rawX.toInt(), event.rawY.toInt())
+                MotionEvent.ACTION_MOVE -> if (isInMovement) {
+                    vm.moveTo(event.rawX.toInt(), event.rawY.toInt())
                 }
-                MotionEvent.ACTION_UP -> if (inMovement) {
+                MotionEvent.ACTION_UP -> if (isInMovement) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
-                    viewModel.addWhite(x, y)
+                    if (x in 0..7 && y in 0..7 && x % 2 != y % 2 && vm.isEmpty(x, y) &&
+                            y == pickedFrom.second - 1) {
+                        vm.addWhite(x, y)
+                    }
+                    else {
+                        vm.addWhite(pickedFrom.first, pickedFrom.second)
+                    }
                 }
             }
             true

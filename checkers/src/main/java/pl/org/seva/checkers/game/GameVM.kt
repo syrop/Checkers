@@ -7,29 +7,38 @@ import pl.org.seva.checkers.main.extension.copy
 
 class GameVM : ViewModel() {
 
-    private val whites = mutableListOf(*WHITE_START_POSITION.toTypedArray())
+    var isWhiteMoving = true
 
-    private val blacks = mutableListOf(*BLACK_START_POSITION.toTypedArray())
+    private val whiteMen = mutableListOf(*WHITE_START_POSITION.toTypedArray())
+    private val blackMen = mutableListOf(*BLACK_START_POSITION.toTypedArray())
+    private val whiteKings = mutableListOf<Pair<Int, Int>>()
+    private val blackKings = mutableListOf<Pair<Int, Int>>()
 
-    private val _gameStateFlow = MutableStateFlow(GameState(whites.copy(), blacks.copy()))
+    private val _gameStateFlow = MutableStateFlow(GameState(whiteMen.copy(), blackMen.copy()))
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
     fun removeWhite(x: Int, y: Int): Boolean {
-        val removed = whites.remove(x to y)
+        val removed = whiteMen.remove(x to y)
         if (removed) {
-            _gameStateFlow.value = GameState(whites.copy(), blacks.copy())
+            _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy())
         }
         return removed
     }
 
     fun addWhite(x: Int, y: Int) {
-        whites.add(x to y)
-        _gameStateFlow.value = GameState(whites.copy(), blacks.copy())
+        whiteMen.add(x to y)
+        _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy())
     }
 
     fun moveTo(x: Int, y: Int) {
-        _gameStateFlow.value = GameState(whites.copy(), blacks.copy(), x to y)
+        _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy(), x to y)
     }
+
+    fun containsWhite(x: Int, y: Int) = whiteMen.contains(x to y) || whiteKings.contains(x to y)
+
+    fun containsBlack(x: Int, y: Int) = blackMen.contains(x to y) || blackKings.contains(x to y)
+
+    fun isEmpty(x: Int, y: Int) = !containsWhite(x, y) && !containsBlack(x, y)
 
     companion object {
         val WHITE_START_POSITION = listOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)
