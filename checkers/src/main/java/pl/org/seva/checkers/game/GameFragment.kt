@@ -41,7 +41,6 @@ class GameFragment : Fragment(R.layout.fr_game) {
             return x2 - dirx to y2 - diry
         }
 
-
         binding.pieces.setOnTouchListener { _, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {

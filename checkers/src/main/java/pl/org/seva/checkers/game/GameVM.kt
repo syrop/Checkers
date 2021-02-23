@@ -3,42 +3,44 @@ package pl.org.seva.checkers.game
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import pl.org.seva.checkers.main.extension.copy
 
 class GameVM : ViewModel() {
 
     var isWhiteMoving = true
 
-    private val whiteMen = mutableListOf(*WHITE_START_POSITION.toTypedArray())
-    private val blackMen = mutableListOf(*BLACK_START_POSITION.toTypedArray())
-    private val whiteKings = mutableListOf<Pair<Int, Int>>()
-    private val blackKings = mutableListOf<Pair<Int, Int>>()
+    private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
 
-    private val _gameStateFlow = MutableStateFlow(GameState(whiteMen.copy(), blackMen.copy()))
+    private val _gameStateFlow = MutableStateFlow(gameState.copy())
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
     fun removeWhite(x: Int, y: Int): Boolean {
-        val removed = whiteMen.remove(x to y)
-        if (removed) {
-            _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy())
-        }
-        return removed
+        val removed = gameState.removeWhite(x to y)
+        val result = removed != gameState
+        _gameStateFlow.value = removed
+        gameState = removed
+        return result
     }
 
     fun addWhite(x: Int, y: Int) {
-        whiteMen.add(x to y)
-        _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy())
+        gameState = gameState.addWhiteMan(x to y)
+        _gameStateFlow.value = gameState
     }
 
     fun moveTo(x: Int, y: Int) {
-        _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy(), x to y)
+        gameState = gameState.copy(moving = x to y)
+        _gameStateFlow.value = gameState
     }
 
-    private fun containsWhite(x: Int, y: Int) = whiteMen.contains(x to y) || whiteKings.contains(x to y)
+    private fun containsWhite(x: Int, y: Int) = gameState.containsWhite(x to y)
 
-    private fun containsBlack(x: Int, y: Int) = blackMen.contains(x to y) || blackKings.contains(x to y)
+    private fun containsBlack(x: Int, y: Int) = gameState.containsBlack(x to y)
 
-    fun removeBlack(pair: Pair<Int, Int>) = blackMen.remove(pair) || blackKings.remove(pair)
+    fun removeBlack(pair: Pair<Int, Int>): Boolean {
+        val removed = gameState.removeBlack(pair)
+        val result = gameState == removed
+        gameState = removed
+        return result
+    }
 
     fun isEmpty(x: Int, y: Int) = !containsWhite(x, y) && !containsBlack(x, y)
 
