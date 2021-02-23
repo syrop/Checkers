@@ -34,9 +34,11 @@ class GameVM : ViewModel() {
         _gameStateFlow.value = GameState(whiteMen.copy(), blackMen.copy(), x to y)
     }
 
-    fun containsWhite(x: Int, y: Int) = whiteMen.contains(x to y) || whiteKings.contains(x to y)
+    private fun containsWhite(x: Int, y: Int) = whiteMen.contains(x to y) || whiteKings.contains(x to y)
 
-    fun containsBlack(x: Int, y: Int) = blackMen.contains(x to y) || blackKings.contains(x to y)
+    private fun containsBlack(x: Int, y: Int) = blackMen.contains(x to y) || blackKings.contains(x to y)
+
+    fun removeBlack(pair: Pair<Int, Int>) = blackMen.remove(pair) || blackKings.remove(pair)
 
     fun isEmpty(x: Int, y: Int) = !containsWhite(x, y) && !containsBlack(x, y)
 

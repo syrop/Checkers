@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
 import pl.org.seva.checkers.databinding.FrGameBinding
+import kotlin.math.abs
 
 class GameFragment : Fragment(R.layout.fr_game) {
 
@@ -32,6 +33,15 @@ class GameFragment : Fragment(R.layout.fr_game) {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fun predecessor(x1: Int, y1: Int, x2: Int, y2: Int): Pair<Int, Int> {
+            if (abs(x2 - x1) != abs(y2 - y1) ||
+                    abs(x2 - x1) < 2 || abs(y2 - y1) < 2) return -1 to -1
+            val dirx = if (x2 - x1 > 0) 1 else -1
+            val diry = if (y2 - y1 > 0) 1 else -1
+            return x2 - dirx to y2 - diry
+        }
+
+
         binding.pieces.setOnTouchListener { _, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
@@ -47,7 +57,9 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
                     if (x in 0..7 && y in 0..7 && x % 2 != y % 2 && vm.isEmpty(x, y) &&
-                            y == pickedFrom.second - 1) {
+                            (y == pickedFrom.second - 1 ||
+                                    y == pickedFrom.second - 2 &&
+                                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
                         vm.addWhite(x, y)
                     }
                     else {
