@@ -57,6 +57,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
                     if (x in 0..7 && y in 0..7 && x % 2 != y % 2 && vm.isEmpty(x, y) &&
+                            abs(x - pickedFrom.first) == 1 &&
                             (y == pickedFrom.second - 1 ||
                                     y == pickedFrom.second - 2 &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
