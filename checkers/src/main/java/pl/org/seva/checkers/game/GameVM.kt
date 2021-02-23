@@ -10,7 +10,7 @@ class GameVM : ViewModel() {
 
     private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
 
-    private val _gameStateFlow = MutableStateFlow(gameState.copy())
+    private val _gameStateFlow = MutableStateFlow(gameState)
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
     fun removeWhite(x: Int, y: Int): Boolean {
