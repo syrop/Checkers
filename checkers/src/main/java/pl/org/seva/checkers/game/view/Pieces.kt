@@ -11,26 +11,13 @@ import java.lang.Float.min
 
 class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private var whites = emptyList<Pair<Int, Int>>()
+    private var gameState = GameState(emptyList(), emptyList(), emptyList(), emptyList())
 
-    private var blacks = emptyList<Pair<Int, Int>>()
-
-    private var moving = -1 to -1
-
-    private val whiteFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.GREEN
-        style = Paint.Style.FILL
-    }
-
-    private val blackFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        style = Paint.Style.FILL
-    }
+    private var movingWhiteMan = -1 to -1
 
     fun setGameState(state: GameState) {
-        whites = state.whiteMen
-        blacks = state.blackMen
-        moving = state.moving
+        gameState = state
+        movingWhiteMan = state.movingWhiteMan
         invalidate()
     }
 
@@ -45,15 +32,27 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
             val dx = right / 8f
             val dy = bottom / 8f
             val radius = min(dx, dy) / 2 * 0.85f
-            for (piece in whites) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, whiteFill)
+            for (piece in gameState.whiteMen) {
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, WHITE_FILL)
             }
-            for (piece in blacks) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, blackFill)
+            for (piece in gameState.blackMen) {
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, BLACK_FILL)
             }
-            if (moving != -1 to -1) {
-                drawCircle(moving.first.toFloat(), moving.second.toFloat() - dy, radius, whiteFill)
+            if (movingWhiteMan != -1 to -1) {
+                drawCircle(movingWhiteMan.first.toFloat(), movingWhiteMan.second.toFloat() - dy, radius, WHITE_FILL)
             }
+        }
+    }
+
+    companion object {
+        private val WHITE_FILL = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.GREEN
+            style = Paint.Style.FILL
+        }
+
+        private val BLACK_FILL = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.RED
+            style = Paint.Style.FILL
         }
     }
 }

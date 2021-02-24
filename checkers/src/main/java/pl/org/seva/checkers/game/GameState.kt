@@ -5,7 +5,8 @@ data class GameState(
         val blackMen: List<Pair<Int, Int>>,
         val whiteKings: List<Pair<Int, Int>>,
         val blackKings: List<Pair<Int, Int>>,
-        val moving: Pair<Int, Int> = -1 to -1,
+        val movingWhiteMan: Pair<Int, Int> = -1 to -1,
+        val movingWhiteKing: Pair<Int, Int> = -1 to -1,
 ) {
     fun containsWhite(pair: Pair<Int, Int>) = whiteMen.contains(pair) || whiteKings.contains(pair)
 

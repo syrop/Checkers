@@ -9,11 +9,6 @@ import android.view.View
 
 class Board(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-        style = Paint.Style.FILL
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -23,10 +18,17 @@ class Board(context: Context, attrs: AttributeSet) : View(context, attrs) {
             repeat(8) { x ->
                 repeat(8) { y ->
                     if (x % 2 != y % 2) {
-                        drawRect(x * dx, y * dy, (x + 1) * dx, (y + 1) * dy, fill)
+                        drawRect(x * dx, y * dy, (x + 1) * dx, (y + 1) * dy, BLACK_FILL)
                     }
                 }
             }
+        }
+    }
+
+    companion object {
+        private val BLACK_FILL = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.BLACK
+            style = Paint.Style.FILL
         }
     }
 }

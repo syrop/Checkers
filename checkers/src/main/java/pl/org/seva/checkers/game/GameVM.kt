@@ -27,7 +27,7 @@ class GameVM : ViewModel() {
     }
 
     fun moveTo(x: Int, y: Int) {
-        gameState = gameState.copy(moving = x to y)
+        gameState = gameState.copy(movingWhiteMan = x to y)
         _gameStateFlow.value = gameState
     }
 
