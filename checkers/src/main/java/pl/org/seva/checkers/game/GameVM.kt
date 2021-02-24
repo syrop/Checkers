@@ -42,7 +42,7 @@ class GameVM : ViewModel() {
         return result
     }
 
-    fun isEmpty(x: Int, y: Int) = !containsWhite(x, y) && !containsBlack(x, y)
+    fun isEmpty(x: Int, y: Int) = gameState.isEmpty(x to y)
 
     companion object {
         val WHITE_START_POSITION = listOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)
