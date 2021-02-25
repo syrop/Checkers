@@ -239,47 +239,71 @@ data class GameState(
 
     private fun containsBlack(pair: Pair<Int, Int>) = blackMen.contains(pair) || blackKings.contains(pair)
 
-    fun removeWhite(pair: Pair<Int, Int>) = GameState(
+    fun removeWhite(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen.filter { it != pair },
             blackMen,
             whiteKings.filter { it != pair },
             blackKings,
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
-    fun removeBlack(pair: Pair<Int, Int>) = GameState(
+    fun removeBlack(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen,
             blackMen.filter { it != pair },
             whiteKings,
             blackKings.filter { it != pair },
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
-    fun addWhiteMan(pair: Pair<Int, Int>) = GameState(
+    fun addWhiteMan(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen + pair,
             blackMen,
             whiteKings,
             blackKings,
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
-    private fun addBlackMan(pair: Pair<Int, Int>) = GameState (
+    private fun addBlackMan(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen,
             blackMen + pair,
             whiteKings,
             blackKings,
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
-    fun addWhiteKing(pair: Pair<Int, Int>) = GameState(
+    fun addWhiteKing(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen,
             blackMen,
             whiteKings + pair,
             blackKings,
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
-    private fun addBlackKing(pair: Pair<Int, Int>) = GameState(
+    private fun addBlackKing(pair: Pair<Int, Int>): GameState {
+        val newState = GameState(
             whiteMen,
             blackMen,
             whiteKings,
             blackKings + pair,
-    )
+        )
+        val id = children.indexOf(newState)
+        return if (id >= 0) children[id] else newState
+    }
 
     companion object {
         const val STEPS = 3
