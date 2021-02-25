@@ -13,9 +13,11 @@ data class GameState(
 
     var level = 0
 
+    private var heuristic = 0
+
     private val children = mutableListOf<GameState>()
 
-    suspend fun populateChildren(): Unit = coroutineScope {
+    private suspend fun populateChildren(): Unit = coroutineScope {
         fun isValidAndEmpty(pair: Pair<Int, Int>) = pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
 
         fun GameState.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
@@ -62,135 +64,140 @@ data class GameState(
         if (children.isEmpty()) {
             if (level % 2 == 0) { // black moves
                 val men = async(Dispatchers.Default) {
-                    blackMen
-                        .map { blackMan -> // asynchronously list of moves of this one man
-                            async(Dispatchers.Default) {
-                                val removed = removeBlack(blackMan)
-                                mutableListOf<GameState>().apply {
-                                    val blackManMovesLeft =
-                                        blackMan.first - 1 to blackMan.second + 1
-                                    if (isValidAndEmpty(blackManMovesLeft)) {
-                                        add(removed.addBlack(blackManMovesLeft))
-                                    }
-                                    val blackManMovesRight =
-                                        blackMan.first + 1 to blackMan.second + 1
-                                    if (isValidAndEmpty(blackManMovesRight)) {
-                                        add(removed.addBlack(blackManMovesRight))
-                                    }
-                                    val blackManCapturesLeft =
-                                        blackMan.first - 2 to blackMan.second + 2
-                                    if (isValidAndEmpty(blackManCapturesLeft) && containsWhite(
-                                            blackManMovesLeft
-                                        )
-                                    ) {
-                                        add(
-                                            removed.removeWhite(blackManMovesLeft)
-                                                .addBlack(blackManCapturesLeft)
-                                        )
-                                    }
-                                    val blackManCapturesRight =
-                                        blackMan.first + 2 to blackMan.second + 2
-                                    if (isValidAndEmpty(blackManCapturesRight) && containsWhite(
-                                            blackManMovesRight
-                                        )
-                                    ) {
-                                        add(
-                                            removed.removeWhite(blackManMovesRight)
-                                                .addBlack(blackManCapturesRight)
-                                        )
+                    mutableListOf<GameState>().apply {
+                        blackMen
+                            .map { blackMan -> // asynchronously list of moves of this one man
+                                async(Dispatchers.Default) {
+                                    val removed = removeBlack(blackMan)
+                                    mutableListOf<GameState>().apply {
+                                        val blackManMovesLeft =
+                                            blackMan.first - 1 to blackMan.second + 1
+                                        if (isValidAndEmpty(blackManMovesLeft)) {
+                                            add(removed.addBlack(blackManMovesLeft))
+                                        }
+                                        val blackManMovesRight =
+                                            blackMan.first + 1 to blackMan.second + 1
+                                        if (isValidAndEmpty(blackManMovesRight)) {
+                                            add(removed.addBlack(blackManMovesRight))
+                                        }
+                                        val blackManCapturesLeft =
+                                            blackMan.first - 2 to blackMan.second + 2
+                                        if (isValidAndEmpty(blackManCapturesLeft) && containsWhite(
+                                                blackManMovesLeft
+                                            )
+                                        ) {
+                                            add(
+                                                removed.removeWhite(blackManMovesLeft)
+                                                    .addBlack(blackManCapturesLeft)
+                                            )
+                                        }
+                                        val blackManCapturesRight =
+                                            blackMan.first + 2 to blackMan.second + 2
+                                        if (isValidAndEmpty(blackManCapturesRight) && containsWhite(
+                                                blackManMovesRight
+                                            )
+                                        ) {
+                                            add(
+                                                removed.removeWhite(blackManMovesRight)
+                                                    .addBlack(blackManCapturesRight)
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                        .map { it.await() } // list of moves of this one man
-                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
-                        .onEach { it.level = level + 1 }
+                            .map { it.await() } // list of moves of this one man
+                            .onEach { addAll(it) }
+                    }
                 }
                 val kings = async(Dispatchers.Default) {
-                    blackKings
-                        .map { blackKing ->
-                            async(Dispatchers.Default) {
-                                val removed = removeBlack(blackKing)
-                                mutableListOf<GameState>().apply {
-                                    addAll(removed.kingMoves(blackKing, -1, -1))
-                                    addAll(removed.kingMoves(blackKing, -1, +1))
-                                    addAll(removed.kingMoves(blackKing, +1, -1))
-                                    addAll(removed.kingMoves(blackKing, +1, +1))
+                    mutableListOf<GameState>().apply {
+                        blackKings
+                            .map { blackKing ->
+                                async(Dispatchers.Default) {
+                                    val removed = removeBlack(blackKing)
+                                    mutableListOf<GameState>().apply {
+                                        addAll(removed.kingMoves(blackKing, -1, -1))
+                                        addAll(removed.kingMoves(blackKing, -1, +1))
+                                        addAll(removed.kingMoves(blackKing, +1, -1))
+                                        addAll(removed.kingMoves(blackKing, +1, +1))
+                                    }
                                 }
                             }
-                        }
-                        .map { it.await() }
-                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
-                        .onEach { it.level = level + 1 }
+                            .map { it.await() }
+                            .onEach { addAll(it) }
+                    }
                 }
                 children.addAll(men.await())
                 children.addAll(kings.await())
             } else { // white moves
                 val men = async(Dispatchers.Default) {
-                    whiteMen
-                        .map { whiteMan -> // asynchronously list of moves of this one man
-                            async(Dispatchers.Default) {
-                                val removed = removeWhite(whiteMan)
-                                mutableListOf<GameState>().apply {
-                                    val whiteManMovesLeft =
-                                        whiteMan.first - 1 to whiteMan.second - 1
-                                    if (isValidAndEmpty(whiteManMovesLeft)) {
-                                        add(removed.addWhite(whiteManMovesLeft))
-                                    }
-                                    val whiteManMovesRight =
-                                        whiteMan.first + 1 to whiteMan.second - 1
-                                    if (isValidAndEmpty(whiteManMovesRight)) {
-                                        add(removed.addWhite(whiteManMovesRight))
-                                    }
-                                    val whiteManCapturesLeft =
-                                        whiteMan.first - 2 to whiteMan.second - 2
-                                    if (isValidAndEmpty(whiteManCapturesLeft) && containsBlack(
-                                            whiteManMovesLeft
-                                        )
-                                    ) {
-                                        add(
-                                            removed.removeBlack(whiteManMovesLeft)
-                                                .addWhite(whiteManCapturesLeft)
-                                        )
-                                    }
-                                    val whiteManCapturesRight =
-                                        whiteMan.first + 2 to whiteMan.second - 2
-                                    if (isValidAndEmpty(whiteManCapturesRight) && containsBlack(
-                                            whiteManMovesRight
-                                        )
-                                    ) {
-                                        add(
-                                            removed.removeBlack(whiteManMovesRight)
-                                                .addWhite(whiteManCapturesRight)
-                                        )
+                    mutableListOf<GameState>().apply {
+                        whiteMen
+                            .map { whiteMan -> // asynchronously list of moves of this one man
+                                async(Dispatchers.Default) {
+                                    val removed = removeWhite(whiteMan)
+                                    mutableListOf<GameState>().apply {
+                                        val whiteManMovesLeft =
+                                            whiteMan.first - 1 to whiteMan.second - 1
+                                        if (isValidAndEmpty(whiteManMovesLeft)) {
+                                            add(removed.addWhite(whiteManMovesLeft))
+                                        }
+                                        val whiteManMovesRight =
+                                            whiteMan.first + 1 to whiteMan.second - 1
+                                        if (isValidAndEmpty(whiteManMovesRight)) {
+                                            add(removed.addWhite(whiteManMovesRight))
+                                        }
+                                        val whiteManCapturesLeft =
+                                            whiteMan.first - 2 to whiteMan.second - 2
+                                        if (isValidAndEmpty(whiteManCapturesLeft) && containsBlack(
+                                                whiteManMovesLeft
+                                            )
+                                        ) {
+                                            add(
+                                                removed.removeBlack(whiteManMovesLeft)
+                                                    .addWhite(whiteManCapturesLeft)
+                                            )
+                                        }
+                                        val whiteManCapturesRight =
+                                            whiteMan.first + 2 to whiteMan.second - 2
+                                        if (isValidAndEmpty(whiteManCapturesRight) && containsBlack(
+                                                whiteManMovesRight
+                                            )
+                                        ) {
+                                            add(
+                                                removed.removeBlack(whiteManMovesRight)
+                                                    .addWhite(whiteManCapturesRight)
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                        .map { it.await() } // list of moves of this one man
-                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all white men
-                        .onEach { it.level = level + 1 }
+                            .map { it.await() } // list of moves of this one man
+                            .onEach { addAll(it) }
+                    }
                 }
                 val kings = async(Dispatchers.Default) {
-                    whiteKings
-                        .map { whiteKing ->
-                            async(Dispatchers.Default) {
-                                val removed = removeWhite(whiteKing)
-                                mutableListOf<GameState>().apply {
-                                    addAll(removed.kingMoves(whiteKing, -1, -1))
-                                    addAll(removed.kingMoves(whiteKing, -1, +1))
-                                    addAll(removed.kingMoves(whiteKing, +1, -1))
-                                    addAll(removed.kingMoves(whiteKing, +1, +1))
+                    mutableListOf<GameState>().apply {
+                        whiteKings
+                            .map { whiteKing ->
+                                async(Dispatchers.Default) {
+                                    val removed = removeWhite(whiteKing)
+                                    mutableListOf<GameState>().apply {
+                                        addAll(removed.kingMoves(whiteKing, -1, -1))
+                                        addAll(removed.kingMoves(whiteKing, -1, +1))
+                                        addAll(removed.kingMoves(whiteKing, +1, -1))
+                                        addAll(removed.kingMoves(whiteKing, +1, +1))
+                                    }
                                 }
                             }
-                        }
-                        .map { it.await() }
-                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
-                        .onEach { it.level = level + 1 }
+                            .map { it.await() }
+                            .onEach { addAll(it) }
+                    }
                 }
                 children.addAll(men.await())
                 children.addAll(kings.await())
             }
+            children.onEach { it.level = level +1 }
         } // if (children.isEmpty())
         children
             .map { child ->
@@ -199,6 +206,31 @@ data class GameState(
                 }
             }
             .joinAll()
+    }
+
+    private fun updateHeuristic() {
+        heuristic = if (level == STEPS) {
+            whiteMen.size + whiteKings.size * 3 - blackMen.size - blackKings.size * 3
+        } else {
+            children.forEach { it.updateHeuristic() }
+            if (level % 2 == 0) {
+                children.maxOf { it.heuristic }
+            } else {
+                children.minOf { it.heuristic }
+            }
+        }
+    }
+
+    suspend fun nextBlackMove(): GameState {
+        populateChildren()
+        updateHeuristic()
+        return children.minWithOrNull { s1, s2 ->
+            when {
+                s1.heuristic < s2.heuristic -> -1
+                s1.heuristic == s2.heuristic -> 0
+                else -> 1
+            }
+        } ?: GameState(emptyList(), emptyList(), emptyList(), emptyList())
     }
 
     fun isEmpty(pair: Pair<Int, Int>) = !containsWhite(pair) && !containsBlack(pair)

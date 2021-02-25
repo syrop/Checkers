@@ -61,6 +61,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                                     y == pickedFrom.second - 2 &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
                         vm.addWhite(x, y)
+                        vm.blackMove()
                     }
                     else {
                         vm.addWhite(pickedFrom.first, pickedFrom.second)

@@ -1,8 +1,10 @@
 package pl.org.seva.checkers.game
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class GameVM : ViewModel() {
 
@@ -44,6 +46,15 @@ class GameVM : ViewModel() {
     }
 
     fun isEmpty(x: Int, y: Int) = gameState.isEmpty(x to y)
+
+    fun blackMove() {
+        isWhiteMoving = false
+        viewModelScope.launch {
+            gameState = gameState.nextBlackMove()
+            _gameStateFlow.value = gameState
+            isWhiteMoving = true
+        }
+    }
 
     companion object {
         val WHITE_START_POSITION = listOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)
