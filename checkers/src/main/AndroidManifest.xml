@@ -4,7 +4,7 @@
           package="pl.org.seva.checkers">
 
     <application
-        android:name="pl.org.seva.checkers.main.MyApplication"
+        android:name="pl.org.seva.checkers.main.Checkers"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
