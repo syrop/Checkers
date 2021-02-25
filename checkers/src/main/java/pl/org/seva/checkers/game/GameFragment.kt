@@ -50,7 +50,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     isInMovement = vm.removeWhite(x, y)
                 }
                 MotionEvent.ACTION_MOVE -> if (isInMovement) {
-                    vm.moveTo(event.rawX.toInt(), event.rawY.toInt())
+                    vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
                 }
                 MotionEvent.ACTION_UP -> if (isInMovement) {
                     val x = binding.pieces.getX(event.rawX)
