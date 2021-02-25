@@ -12,6 +12,8 @@ class GameVM : ViewModel() {
 
     private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
 
+    private lateinit var storedState: GameState
+
     private val _gameStateFlow = MutableStateFlow(gameState)
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
@@ -24,7 +26,7 @@ class GameVM : ViewModel() {
     }
 
     fun addWhite(x: Int, y: Int) {
-        gameState = if (y == 7) {
+        gameState = if (y == 0) {
             gameState.addWhiteKing(x to y)
         }
         else {
@@ -54,6 +56,18 @@ class GameVM : ViewModel() {
             _gameStateFlow.value = gameState
             isWhiteMoving = true
         }
+    }
+
+    fun storeState() {
+        storedState = gameState
+    }
+
+    fun restoreState() {
+        gameState = storedState
+    }
+
+    fun commitState() {
+        gameState = storedState.getChildIfExists(gameState)
     }
 
     companion object {

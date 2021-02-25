@@ -46,6 +46,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                 MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
+                    vm.storeState()
                     pickedFrom = x to y
                     isInMovement = vm.removeWhite(x, y)
                 }
@@ -62,10 +63,11 @@ class GameFragment : Fragment(R.layout.fr_game) {
                                     y == pickedFrom.second - 2 &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
                         vm.addWhite(x, y)
+                        vm.commitState()
                         vm.blackMove()
                     }
                     else {
-                        vm.addWhite(pickedFrom.first, pickedFrom.second)
+                        vm.restoreState()
                     }
                     isInMovement = false
                 }

@@ -281,6 +281,11 @@ data class GameState(
             blackKings + pair,
     )
 
+    fun getChildIfExists(state: GameState): GameState {
+        val id = children.indexOf(state)
+        return if (id >= 0) children.get(id) else state
+    }
+
     companion object {
         const val STEPS = 3
     }
