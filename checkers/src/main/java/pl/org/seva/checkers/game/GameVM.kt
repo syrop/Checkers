@@ -22,7 +22,12 @@ class GameVM : ViewModel() {
     }
 
     fun addWhite(x: Int, y: Int) {
-        gameState = gameState.addWhiteMan(x to y)
+        gameState = if (y == 7) {
+            gameState.addWhiteKing(x to y)
+        }
+        else {
+            gameState.addWhiteMan(x to y)
+        }
         _gameStateFlow.value = gameState
     }
 
@@ -30,10 +35,6 @@ class GameVM : ViewModel() {
         gameState = gameState.copy(movingWhiteMan = x to y)
         _gameStateFlow.value = gameState
     }
-
-    private fun containsWhite(x: Int, y: Int) = gameState.containsWhite(x to y)
-
-    private fun containsBlack(x: Int, y: Int) = gameState.containsBlack(x to y)
 
     fun removeBlack(pair: Pair<Int, Int>): Boolean {
         val removed = gameState.removeBlack(pair)
