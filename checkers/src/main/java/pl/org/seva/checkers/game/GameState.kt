@@ -163,7 +163,7 @@ data class GameState(
             blackKings,
     )
 
-    fun addBlackMan(pair: Pair<Int, Int>) = GameState (
+    private fun addBlackMan(pair: Pair<Int, Int>) = GameState (
             whiteMen,
             blackMen + pair,
             whiteKings,
@@ -177,7 +177,7 @@ data class GameState(
             blackKings,
     )
 
-    fun addBlackKing(pair: Pair<Int, Int>) = GameState(
+    private fun addBlackKing(pair: Pair<Int, Int>) = GameState(
             whiteMen,
             blackMen,
             whiteKings,
