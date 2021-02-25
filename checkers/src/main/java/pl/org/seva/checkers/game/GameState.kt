@@ -16,7 +16,7 @@ data class GameState(
     private val children = mutableListOf<GameState>()
 
     suspend fun populateChildren(): Unit = coroutineScope {
-        fun isValidField(pair: Pair<Int, Int>) = pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
+        fun isValidAndEmpty(pair: Pair<Int, Int>) = pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
 
         fun GameState.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
             addBlackKing(pair)
@@ -38,18 +38,18 @@ data class GameState(
             while (true) {
                 x += dirx
                 y += diry
-                if (isValidField(x to y)) {
+                if (isValidAndEmpty(x to y)) {
                     result.add(if (level % 2 == 0) addBlackKing(x to y) else addWhiteKing(x to y))
                 }
                 else break
             }
             if (level % 2 == 0) { // capturing white
-                if (containsWhite(x to y) && isValidField(x + dirx to y + diry)) {
+                if (containsWhite(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
                     result.add(removeWhite(x to y).addWhiteKing(x + dirx to y + diry))
                 }
             }
             else { // capturing black
-                if (containsBlack(x to y) && isValidField(x + dirx to y + diry)) {
+                if (containsBlack(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
                     result.add(removeBlack(x to y).addBlackKing(x + dirx to y + diry))
                 }
             }
@@ -69,17 +69,17 @@ data class GameState(
                                 mutableListOf<GameState>().apply {
                                     val blackManMovesLeft =
                                         blackMan.first - 1 to blackMan.second + 1
-                                    if (isValidField(blackManMovesLeft)) {
+                                    if (isValidAndEmpty(blackManMovesLeft)) {
                                         add(removed.addBlack(blackManMovesLeft))
                                     }
                                     val blackManMovesRight =
                                         blackMan.first + 1 to blackMan.second + 1
-                                    if (isValidField(blackManMovesRight)) {
+                                    if (isValidAndEmpty(blackManMovesRight)) {
                                         add(removed.addBlack(blackManMovesRight))
                                     }
                                     val blackManCapturesLeft =
                                         blackMan.first - 2 to blackMan.second + 2
-                                    if (isValidField(blackManCapturesLeft) && containsWhite(
+                                    if (isValidAndEmpty(blackManCapturesLeft) && containsWhite(
                                             blackManMovesLeft
                                         )
                                     ) {
@@ -90,7 +90,7 @@ data class GameState(
                                     }
                                     val blackManCapturesRight =
                                         blackMan.first + 2 to blackMan.second + 2
-                                    if (isValidField(blackManCapturesRight) && containsWhite(
+                                    if (isValidAndEmpty(blackManCapturesRight) && containsWhite(
                                             blackManMovesRight
                                         )
                                     ) {
@@ -134,17 +134,17 @@ data class GameState(
                                 mutableListOf<GameState>().apply {
                                     val whiteManMovesLeft =
                                         whiteMan.first - 1 to whiteMan.second - 1
-                                    if (isValidField(whiteManMovesLeft)) {
+                                    if (isValidAndEmpty(whiteManMovesLeft)) {
                                         add(removed.addWhite(whiteManMovesLeft))
                                     }
                                     val whiteManMovesRight =
                                         whiteMan.first + 1 to whiteMan.second - 1
-                                    if (isValidField(whiteManMovesRight)) {
+                                    if (isValidAndEmpty(whiteManMovesRight)) {
                                         add(removed.addWhite(whiteManMovesRight))
                                     }
                                     val whiteManCapturesLeft =
                                         whiteMan.first - 2 to whiteMan.second - 2
-                                    if (isValidField(whiteManCapturesLeft) && containsBlack(
+                                    if (isValidAndEmpty(whiteManCapturesLeft) && containsBlack(
                                             whiteManMovesLeft
                                         )
                                     ) {
@@ -155,7 +155,7 @@ data class GameState(
                                     }
                                     val whiteManCapturesRight =
                                         whiteMan.first + 2 to whiteMan.second - 2
-                                    if (isValidField(whiteManCapturesRight) && containsBlack(
+                                    if (isValidAndEmpty(whiteManCapturesRight) && containsBlack(
                                             whiteManMovesRight
                                         )
                                     ) {
