@@ -1,8 +1,6 @@
 package pl.org.seva.checkers.game
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 
 data class GameState(
         val whiteMen: List<Pair<Int, Int>>,
@@ -17,7 +15,7 @@ data class GameState(
 
     private val children = mutableListOf<GameState>()
 
-    suspend fun populateChildren() = coroutineScope {
+    suspend fun populateChildren(): Unit = coroutineScope {
         fun isValidField(pair: Pair<Int, Int>) = pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
 
         fun GameState.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
@@ -32,6 +30,30 @@ data class GameState(
         }
         else {
             addWhiteMan(pair)
+        }
+
+        fun GameState.kingMoves(pair: Pair<Int, Int>, dirx: Int, diry: Int): List<GameState> {
+            val result = mutableListOf<GameState>()
+            var (x, y) = pair
+            while (true) {
+                x += dirx
+                y += diry
+                if (isValidField(x to y)) {
+                    result.add(if (level % 2 == 0) addBlackKing(x to y) else addWhiteKing(x to y))
+                }
+                else break
+            }
+            if (level % 2 == 0) { // capturing white
+                if (containsWhite(x to y) && isValidField(x + dirx to y + diry)) {
+                    result.add(removeWhite(x to y).addWhiteKing(x + dirx to y + diry))
+                }
+            }
+            else { // capturing black
+                if (containsBlack(x to y) && isValidField(x + dirx to y + diry)) {
+                    result.add(removeBlack(x to y).addBlackKing(x + dirx to y + diry))
+                }
+            }
+            return result
         }
 
         if (level == STEPS) {
@@ -84,7 +106,25 @@ data class GameState(
                         .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
                         .onEach { it.level = level + 1 }
                 }
+                val kings = async(Dispatchers.Default) {
+                    blackKings
+                        .map { blackKing ->
+                            async(Dispatchers.Default) {
+                                val removed = removeBlack(blackKing)
+                                mutableListOf<GameState>().apply {
+                                    addAll(removed.kingMoves(blackKing, -1, -1))
+                                    addAll(removed.kingMoves(blackKing, -1, +1))
+                                    addAll(removed.kingMoves(blackKing, +1, -1))
+                                    addAll(removed.kingMoves(blackKing, +1, +1))
+                                }
+                            }
+                        }
+                        .map { it.await() }
+                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
+                        .onEach { it.level = level + 1 }
+                }
                 children.addAll(men.await())
+                children.addAll(kings.await())
             } else { // white moves
                 val men = async(Dispatchers.Default) {
                     whiteMen
@@ -131,9 +171,34 @@ data class GameState(
                         .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all white men
                         .onEach { it.level = level + 1 }
                 }
+                val kings = async(Dispatchers.Default) {
+                    whiteKings
+                        .map { whiteKing ->
+                            async(Dispatchers.Default) {
+                                val removed = removeWhite(whiteKing)
+                                mutableListOf<GameState>().apply {
+                                    addAll(removed.kingMoves(whiteKing, -1, -1))
+                                    addAll(removed.kingMoves(whiteKing, -1, +1))
+                                    addAll(removed.kingMoves(whiteKing, +1, -1))
+                                    addAll(removed.kingMoves(whiteKing, +1, +1))
+                                }
+                            }
+                        }
+                        .map { it.await() }
+                        .reduce { acc, list -> acc.apply { addAll(list) } } // list of moves of all black men
+                        .onEach { it.level = level + 1 }
+                }
                 children.addAll(men.await())
+                children.addAll(kings.await())
             }
-        }
+        } // if (children.isEmpty())
+        children
+            .map { child ->
+                launch(Dispatchers.Default) {
+                    child.populateChildren()
+                }
+            }
+            .joinAll()
     }
 
     fun isEmpty(pair: Pair<Int, Int>) = !containsWhite(pair) && !containsBlack(pair)
