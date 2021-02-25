@@ -56,8 +56,9 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
                     if (x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
-                            abs(x - pickedFrom.first) == 1 &&
-                            (y == pickedFrom.second - 1 ||
+                        (abs(x - pickedFrom.first) == 1 &&
+                            y == pickedFrom.second - 1 ||
+                                abs(x - pickedFrom.first) == 2 &&
                                     y == pickedFrom.second - 2 &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
                         vm.addWhite(x, y)
@@ -66,6 +67,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     else {
                         vm.addWhite(pickedFrom.first, pickedFrom.second)
                     }
+                    isInMovement = false
                 }
             }
             true

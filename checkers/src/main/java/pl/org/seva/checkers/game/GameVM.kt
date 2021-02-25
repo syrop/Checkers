@@ -40,7 +40,7 @@ class GameVM : ViewModel() {
 
     fun removeBlack(pair: Pair<Int, Int>): Boolean {
         val removed = gameState.removeBlack(pair)
-        val result = gameState == removed
+        val result = gameState != removed
         gameState = removed
         return result
     }
