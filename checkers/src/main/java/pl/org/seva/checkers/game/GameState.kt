@@ -47,12 +47,12 @@ data class GameState(
             }
             if (level % 2 == 0) { // capturing white
                 if (containsWhite(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
-                    result.add(removeWhite(x to y).addWhiteKing(x + dirx to y + diry))
+                    result.add(removeWhite(x to y).addBlackKing(x + dirx to y + diry))
                 }
             }
             else { // capturing black
                 if (containsBlack(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
-                    result.add(removeBlack(x to y).addBlackKing(x + dirx to y + diry))
+                    result.add(removeBlack(x to y).addWhiteKing(x + dirx to y + diry))
                 }
             }
             return result

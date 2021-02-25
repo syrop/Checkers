@@ -38,6 +38,14 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
             for (piece in gameState.blackMen) {
                 drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, BLACK_FILL)
             }
+            for (piece in gameState.whiteKings) {
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, WHITE_FILL)
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius / 2, CROWN)
+            }
+            for (piece in gameState.blackKings) {
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, BLACK_FILL)
+                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius / 2, CROWN)
+            }
             if (movingWhiteMan != -1 to -1) {
                 drawCircle(movingWhiteMan.first.toFloat(), movingWhiteMan.second.toFloat() - dy, radius, WHITE_FILL)
             }
@@ -52,6 +60,11 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         private val BLACK_FILL = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.RED
+            style = Paint.Style.FILL
+        }
+
+        private val CROWN = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
             style = Paint.Style.FILL
         }
     }
