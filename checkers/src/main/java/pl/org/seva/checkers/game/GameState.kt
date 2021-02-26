@@ -58,7 +58,7 @@ data class GameState(
             return result
         }
 
-        if (level == STEPS) {
+        if (level == DEPTH) {
             return@coroutineScope
         }
         if (children.isEmpty()) {
@@ -212,7 +212,7 @@ data class GameState(
         fun heuristic() = if (whiteMen .isEmpty() && whiteKings.isEmpty()) Int.MAX_VALUE else
             if (blackMen.isEmpty() && blackKings.isEmpty()) Int.MIN_VALUE else
             whiteMen.size + whiteKings.size * KINGS_WEIGHT - blackMen.size - blackKings.size * KINGS_WEIGHT
-        heuristic = if (level == STEPS) {
+        heuristic = if (level == DEPTH) {
             heuristic()
         } else {
             children.forEach { it.updateHeuristic() }
@@ -301,7 +301,7 @@ data class GameState(
     fun containsWhiteKing(pair: Pair<Int, Int>) = whiteKings.contains(pair)
 
     companion object {
-        const val STEPS = 4 // higher than 5 has a significant performance impact
+        const val DEPTH = 3 // higher than 5 has a significant performance impact
         const val KINGS_WEIGHT = 4
     }
 }
