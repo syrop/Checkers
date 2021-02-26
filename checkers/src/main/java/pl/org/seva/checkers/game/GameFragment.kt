@@ -18,6 +18,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
     private val vm by viewModels<GameVM>()
 
     var isInMovement = false
+    var isKingInMovement = false
     var pickedFrom = -1 to -1
 
     override fun onCreateView(
@@ -48,10 +49,16 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     val y = binding.pieces.getY(event.rawY)
                     vm.storeState()
                     pickedFrom = x to y
+                    isKingInMovement = vm.containsWhiteKing(x, y)
                     isInMovement = vm.removeWhite(x, y)
                 }
                 MotionEvent.ACTION_MOVE -> if (isInMovement) {
-                    vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
+                    if (isKingInMovement) {
+                        vm.moveWhiteKingTo(event.rawX.toInt(), event.rawY.toInt())
+                    }
+                    else {
+                        vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
+                    }
                 }
                 MotionEvent.ACTION_UP -> if (isInMovement) {
                     val x = binding.pieces.getX(event.rawX)

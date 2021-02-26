@@ -13,11 +13,8 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var gameState = GameState(emptyList(), emptyList(), emptyList(), emptyList())
 
-    private var movingWhiteMan = -1 to -1
-
     fun setGameState(state: GameState) {
         gameState = state
-        movingWhiteMan = state.movingWhiteMan
         invalidate()
     }
 
@@ -32,22 +29,26 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
             val dx = right / 8f
             val dy = bottom / 8f
             val radius = min(dx, dy) / 2 * 0.85f
-            for (piece in gameState.whiteMen) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, WHITE_FILL)
+            gameState.whiteMen.forEach { whiteMan ->
+                drawCircle(whiteMan.first * dx + dx / 2, whiteMan.second * dy + dy / 2, radius, WHITE_FILL)
             }
-            for (piece in gameState.blackMen) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, BLACK_FILL)
+            gameState.blackMen.forEach { blackMan ->
+                drawCircle(blackMan.first * dx + dx / 2, blackMan.second * dy + dy / 2, radius, BLACK_FILL)
             }
-            for (piece in gameState.whiteKings) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, WHITE_FILL)
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius / 2, CROWN)
+            gameState.whiteKings.forEach { whiteKing ->
+                drawCircle(whiteKing.first * dx + dx / 2, whiteKing.second * dy + dy / 2, radius, WHITE_FILL)
+                drawCircle(whiteKing.first * dx + dx / 2, whiteKing.second * dy + dy / 2, radius / 2, CROWN)
             }
-            for (piece in gameState.blackKings) {
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius, BLACK_FILL)
-                drawCircle(piece.first * dx + dx / 2, piece.second * dy + dy / 2, radius / 2, CROWN)
+            gameState.blackKings.forEach { blackKing ->
+                drawCircle(blackKing.first * dx + dx / 2, blackKing.second * dy + dy / 2, radius, BLACK_FILL)
+                drawCircle(blackKing.first * dx + dx / 2, blackKing.second * dy + dy / 2, radius / 2, CROWN)
             }
-            if (movingWhiteMan != -1 to -1) {
-                drawCircle(movingWhiteMan.first.toFloat(), movingWhiteMan.second.toFloat() - dy, radius, WHITE_FILL)
+            if (gameState.movingWhiteMan != -1 to -1) {
+                drawCircle(gameState.movingWhiteMan.first.toFloat(), gameState.movingWhiteMan.second.toFloat() - dy, radius, WHITE_FILL)
+            }
+            if (gameState.movingWhiteKing != -1 to -1) {
+                drawCircle(gameState.movingWhiteKing.first.toFloat(), gameState.movingWhiteKing.second.toFloat() - dy, radius, WHITE_FILL)
+                drawCircle(gameState.movingWhiteKing.first.toFloat(), gameState.movingWhiteKing.second.toFloat() - dy, radius / 2, CROWN)
             }
         }
     }

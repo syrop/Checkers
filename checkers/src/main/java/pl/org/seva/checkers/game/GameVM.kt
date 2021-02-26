@@ -17,6 +17,8 @@ class GameVM : ViewModel() {
     private val _gameStateFlow = MutableStateFlow(gameState)
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
+    fun containsWhiteKing(x: Int, y: Int) = gameState.containsWhiteKing(x to y)
+
     fun removeWhite(x: Int, y: Int): Boolean {
         val removed = gameState.removeWhite(x to y)
         val result = removed != gameState
@@ -37,6 +39,11 @@ class GameVM : ViewModel() {
 
     fun moveWhiteManTo(x: Int, y: Int) {
         gameState = gameState.copy(movingWhiteMan = x to y)
+        _gameStateFlow.value = gameState
+    }
+
+    fun moveWhiteKingTo(x: Int, y: Int) {
+        gameState = gameState.copy(movingWhiteKing = x to y)
         _gameStateFlow.value = gameState
     }
 
@@ -69,7 +76,7 @@ class GameVM : ViewModel() {
 
     fun commitState() {
         gameState = storedState.getChildOrNull(gameState)
-            ?.apply { reduceLevelBy2() } ?: gameState
+            ?.apply { reduceLevel() } ?: gameState
     }
 
     companion object {

@@ -286,10 +286,12 @@ data class GameState(
         return if (id >= 0) children[id] else null
     }
 
-    fun reduceLevelBy2() {
+    fun reduceLevel() {
         level -= 2
-        children.onEach { it.reduceLevelBy2() }
+        children.onEach { it.reduceLevel() }
     }
+
+    fun containsWhiteKing(pair: Pair<Int, Int>) = whiteKings.contains(pair)
 
     companion object {
         const val STEPS = 3
