@@ -209,14 +209,19 @@ data class GameState(
     }
 
     private fun updateHeuristic() {
+        fun heuristic() = whiteMen.size + whiteKings.size * KINGS_WEIGHT - blackMen.size - blackKings.size * KINGS_WEIGHT
         heuristic = if (level == STEPS) {
-            whiteMen.size + whiteKings.size * 3 - blackMen.size - blackKings.size * 3
+            heuristic()
         } else {
             children.forEach { it.updateHeuristic() }
-            if (level % 2 == 0) {
-                children.maxOf { it.heuristic }
-            } else {
-                children.minOf { it.heuristic }
+            when {
+                children.isEmpty() -> heuristic()
+                level % 2 == 0 -> {
+                    children.maxOf { it.heuristic }
+                }
+                else -> {
+                    children.minOf { it.heuristic }
+                }
             }
         }
     }
@@ -295,5 +300,6 @@ data class GameState(
 
     companion object {
         const val STEPS = 3
+        const val KINGS_WEIGHT = 4
     }
 }

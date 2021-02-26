@@ -27,8 +27,8 @@ class GameVM : ViewModel() {
         return result
     }
 
-    fun addWhite(x: Int, y: Int) {
-        gameState = if (y == 0) {
+    fun addWhite(x: Int, y: Int, forceKing: Boolean = false) {
+        gameState = if (forceKing || y == 0) {
             gameState.addWhiteKing(x to y)
         }
         else {

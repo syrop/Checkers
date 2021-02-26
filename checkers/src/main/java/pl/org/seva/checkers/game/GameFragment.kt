@@ -66,12 +66,14 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     if (x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
                         (abs(x - pickedFrom.first) == 1 &&
                             y == pickedFrom.second - 1 ||
-                                abs(x - pickedFrom.first) == 2 &&
-                                    y == pickedFrom.second - 2 &&
+                                (abs(x - pickedFrom.first) == 2 &&
+                                    y == pickedFrom.second - 2 ||
+                                        abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
+                                        isKingInMovement) &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
-                        vm.addWhite(x, y)
-                        vm.commitState()
-                        vm.blackMove()
+                                        vm.addWhite(x, y, isKingInMovement)
+                                        vm.commitState()
+                                        vm.blackMove()
                     }
                     else {
                         vm.restoreState()
