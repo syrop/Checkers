@@ -64,6 +64,7 @@ class GameVM : ViewModel() {
 
     fun restoreState() {
         gameState = storedState
+        _gameStateFlow.value = gameState
     }
 
     fun commitState() {
