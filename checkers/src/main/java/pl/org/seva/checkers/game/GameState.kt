@@ -299,7 +299,7 @@ data class GameState(
     fun containsWhiteKing(pair: Pair<Int, Int>) = whiteKings.contains(pair)
 
     companion object {
-        const val STEPS = 3 // higher than 5 has a significant performance impact
+        const val STEPS = 4 // higher than 5 has a significant performance impact
         const val KINGS_WEIGHT = 4
     }
 }
