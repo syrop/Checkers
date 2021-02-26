@@ -67,7 +67,8 @@ class GameVM : ViewModel() {
     }
 
     fun commitState() {
-        gameState = storedState.getChildIfExists(gameState)
+        gameState = storedState.getChildOrNull(gameState)
+            ?.apply { reduceLevelBy2() } ?: gameState
     }
 
     companion object {

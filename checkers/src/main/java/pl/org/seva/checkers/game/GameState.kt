@@ -281,9 +281,14 @@ data class GameState(
             blackKings + pair,
     )
 
-    fun getChildIfExists(state: GameState): GameState {
+    fun getChildOrNull(state: GameState): GameState? {
         val id = children.indexOf(state)
-        return if (id >= 0) children.get(id) else state
+        return if (id >= 0) children[id] else null
+    }
+
+    fun reduceLevelBy2() {
+        level -= 2
+        children.onEach { it.reduceLevelBy2() }
     }
 
     companion object {
