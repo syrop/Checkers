@@ -2,10 +2,7 @@ package pl.org.seva.checkers.game
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
@@ -26,6 +23,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        setHasOptionsMenu(true)
         binding = FrGameBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = vm
@@ -83,5 +81,20 @@ class GameFragment : Fragment(R.layout.fr_game) {
             }
             true
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.reset -> {
+                vm.reset()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

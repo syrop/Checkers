@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Checkers</string>
 
-    <!-- First fragment. -->
-    <string name="first_label">Checkers</string>
+    <!-- Game fragment. -->
+    <string name="game_label">Checkers</string>
+
+    <string name="reset">Reset</string>
 
 </resources>

@@ -17,6 +17,12 @@ class GameVM : ViewModel() {
     private val _gameStateFlow = MutableStateFlow(gameState)
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
 
+    fun reset() {
+        isWhiteMoving = true
+        gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
+        _gameStateFlow.value = gameState
+    }
+
     fun containsWhiteKing(x: Int, y: Int) = gameState.containsWhiteKing(x to y)
 
     fun removeWhite(x: Int, y: Int): Boolean {
