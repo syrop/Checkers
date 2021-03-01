@@ -1,5 +1,6 @@
 package pl.org.seva.checkers.game
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,9 @@ class GameVM : ViewModel() {
 
     private val _gameStateFlow = MutableStateFlow(gameState)
     val gameStateFlow: StateFlow<GameState> = _gameStateFlow
+
+    private val _progressVisibility = MutableStateFlow(View.GONE)
+    val progressVisibility: StateFlow<Int> = _progressVisibility
 
     fun reset() {
         isWhiteMoving = true
@@ -64,10 +68,12 @@ class GameVM : ViewModel() {
 
     fun blackMove() {
         isWhiteMoving = false
+        _progressVisibility.value = View.VISIBLE
         viewModelScope.launch {
             gameState = gameState.nextBlackMove()
             _gameStateFlow.value = gameState
             isWhiteMoving = true
+            _progressVisibility.value = View.GONE
         }
     }
 
