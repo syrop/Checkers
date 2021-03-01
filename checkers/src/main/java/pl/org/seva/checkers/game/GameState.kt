@@ -209,8 +209,8 @@ data class GameState(
     }
 
     private fun updateHeuristic() {
-        fun heuristic() = if (whiteMen .isEmpty() && whiteKings.isEmpty()) Int.MAX_VALUE else
-            if (blackMen.isEmpty() && blackKings.isEmpty()) Int.MIN_VALUE else
+        fun heuristic() = if (whiteMen .isEmpty() && whiteKings.isEmpty()) Int.MIN_VALUE else
+            if (blackMen.isEmpty() && blackKings.isEmpty()) Int.MAX_VALUE else
             whiteMen.size + whiteKings.size * KINGS_WEIGHT - blackMen.size - blackKings.size * KINGS_WEIGHT
         heuristic = if (level == DEPTH) {
             heuristic()
