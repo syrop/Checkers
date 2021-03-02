@@ -57,6 +57,10 @@ class GameVM : ViewModel() {
         _gameStateFlow.value = gameState
     }
 
+    fun stopMovement() {
+        gameState = gameState.stopMovement()
+    }
+
     fun removeBlack(pair: Pair<Int, Int>): Boolean {
         val removed = gameState.removeBlack(pair)
         val result = gameState != removed

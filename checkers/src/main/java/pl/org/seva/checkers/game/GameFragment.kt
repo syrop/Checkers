@@ -69,6 +69,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                                         abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
                                         isKingInMovement) &&
                                     vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
+                                        vm.stopMovement()
                                         vm.addWhite(x, y, isKingInMovement)
                                         vm.commitState()
                                         vm.blackMove()
@@ -76,6 +77,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     else {
                         vm.restoreState()
                     }
+                    isKingInMovement = false
                     isInMovement = false
                 }
             }

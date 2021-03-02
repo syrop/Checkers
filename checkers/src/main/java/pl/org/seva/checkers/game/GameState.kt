@@ -246,46 +246,35 @@ data class GameState(
 
     private fun containsBlack(pair: Pair<Int, Int>) = blackMen.contains(pair) || blackKings.contains(pair)
 
-    fun removeWhite(pair: Pair<Int, Int>) = GameState(
-            whiteMen.filter { it != pair },
-            blackMen,
-            whiteKings.filter { it != pair },
-            blackKings,
+    fun removeWhite(pair: Pair<Int, Int>) = copy(
+        whiteMen = whiteMen.filter { it != pair },
+        whiteKings = whiteKings.filter { it != pair },
     )
 
-    fun removeBlack(pair: Pair<Int, Int>) = GameState(
-            whiteMen,
-            blackMen.filter { it != pair },
-            whiteKings,
-            blackKings.filter { it != pair },
+    fun removeBlack(pair: Pair<Int, Int>) = copy(
+        blackMen = blackMen.filter { it != pair },
+        blackKings = blackKings.filter { it != pair },
     )
 
-    fun addWhiteMan(pair: Pair<Int, Int>) = GameState(
-            whiteMen + pair,
-            blackMen,
-            whiteKings,
-            blackKings,
+    fun addWhiteMan(pair: Pair<Int, Int>) = copy(
+        whiteMen = whiteMen + pair,
     )
 
-    private fun addBlackMan(pair: Pair<Int, Int>) = GameState (
-            whiteMen,
-            blackMen + pair,
-            whiteKings,
-            blackKings,
+    private fun addBlackMan(pair: Pair<Int, Int>) = copy(
+        blackMen = blackMen + pair,
     )
 
-    fun addWhiteKing(pair: Pair<Int, Int>) = GameState(
-            whiteMen,
-            blackMen,
-            whiteKings + pair,
-            blackKings,
+    fun addWhiteKing(pair: Pair<Int, Int>) = copy(
+        whiteKings = whiteKings + pair,
     )
 
-    private fun addBlackKing(pair: Pair<Int, Int>) = GameState(
-            whiteMen,
-            blackMen,
-            whiteKings,
-            blackKings + pair,
+    private fun addBlackKing(pair: Pair<Int, Int>) = copy(
+        blackKings = blackKings + pair,
+    )
+
+    fun stopMovement() = copy(
+        movingWhiteMan = -1 to -1,
+        movingWhiteKing = -1 to -1,
     )
 
     fun getChildOrNull(state: GameState): GameState? {
