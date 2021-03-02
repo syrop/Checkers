@@ -77,8 +77,6 @@ class GameFragment : Fragment(R.layout.fr_game) {
                     val y = binding.pieces.getY(event.rawY)
                     val validKingMove = abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
                             isKingInMovement
-                    println("wiktor valid king move: $validKingMove")
-                    println("wiktor king in movement: $isKingInMovement")
                     if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
                         abs(x - pickedFrom.first) == 1 &&
                             y == pickedFrom.second - 1 ||
