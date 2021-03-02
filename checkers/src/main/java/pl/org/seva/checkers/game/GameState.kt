@@ -219,10 +219,10 @@ data class GameState(
             when {
                 children.isEmpty() -> heuristic()
                 level % 2 == 0 -> { // black moves
-                    children.maxOf { it.heuristic }
+                    children.minOf { it.heuristic }
                 }
                 else -> { // white moves
-                    children.minOf { it.heuristic }
+                    children.maxOf { it.heuristic }
                 }
             }
         }
@@ -231,6 +231,9 @@ data class GameState(
     suspend fun nextBlackMove(): GameState {
         populateChildren()
         updateHeuristic()
+        children.forEach {
+            println("wiktor $it ${it.heuristic}")
+        }
         return children.minWithOrNull { s1, s2 ->
             when {
                 s1.heuristic < s2.heuristic -> -1

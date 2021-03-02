@@ -12,6 +12,7 @@ class GameVM : ViewModel() {
     var isWhiteMoving = true
 
     private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
+//    private var gameState = GameState(emptyList(), emptyList(), listOf(0 to 7), listOf(7 to 0))
 
     private lateinit var storedState: GameState
 
