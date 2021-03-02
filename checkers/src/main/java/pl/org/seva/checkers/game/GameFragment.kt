@@ -40,6 +40,20 @@ class GameFragment : Fragment(R.layout.fr_game) {
             return x2 - dirx to y2 - diry
         }
 
+        fun validateKingMove(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
+            val dirx = if (x2 - x1 > 0) 1 else -1
+            val diry = if (y2 - y1 > 0) 1 else -1
+            var x = x1 + dirx
+            var y = y1 + diry
+            if (x == x2 && y == y2) return true // movement by 1
+            while (x != x2 - dirx && y != y2 - diry) {
+                if (!vm.isEmpty(x, y)) return false
+                x += dirx
+                y += diry
+            }
+            return vm.isEmpty(x, y) || vm.removeBlack(x to y)
+        }
+
         binding.pieces.setOnTouchListener { _, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
@@ -61,14 +75,18 @@ class GameFragment : Fragment(R.layout.fr_game) {
                 MotionEvent.ACTION_UP -> if (isInMovement) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
+                    val validKingMove = abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
+                            isKingInMovement
+                    println("wiktor valid king move: $validKingMove")
+                    println("wiktor king in movement: $isKingInMovement")
                     if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
-                        (abs(x - pickedFrom.first) == 1 &&
+                        abs(x - pickedFrom.first) == 1 &&
                             y == pickedFrom.second - 1 ||
-                                (abs(x - pickedFrom.first) == 2 &&
-                                    y == pickedFrom.second - 2 ||
-                                        abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
-                                        isKingInMovement) &&
-                                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)))) {
+                        (abs(x - pickedFrom.first) == 2 &&
+                                    y == pickedFrom.second - 2) &&
+                                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
+                        abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
+                        isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
                                         vm.stopMovement()
                                         vm.addWhite(x, y, isKingInMovement)
                                         vm.commitState()
