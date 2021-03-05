@@ -208,13 +208,16 @@ data class GameState(
             .joinAll()
     }
 
+    fun whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
+
+    fun blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
+
     private fun updateHeuristic() {
-        fun heuristic() = if (whiteMen .isEmpty() && whiteKings.isEmpty()) Int.MIN_VALUE else
-            if (blackMen.isEmpty() && blackKings.isEmpty()) Int.MAX_VALUE else
-            whiteMen.size + whiteKings.size * KINGS_WEIGHT - blackMen.size - blackKings.size * KINGS_WEIGHT
-        heuristic = if (level == DEPTH) {
-            heuristic()
-        } else {
+        fun heuristic() = whiteMen.size + whiteKings.size * KINGS_WEIGHT -
+                blackMen.size - blackKings.size * KINGS_WEIGHT
+        heuristic = if (level == 1 && blackWon()) Int.MIN_VALUE // computer wins in one move
+        else if (level == DEPTH) heuristic()
+        else {
             children.forEach { it.updateHeuristic() }
             when {
                 children.isEmpty() -> heuristic()
@@ -231,9 +234,6 @@ data class GameState(
     suspend fun nextBlackMove(): GameState {
         populateChildren()
         updateHeuristic()
-        children.forEach {
-            println("wiktor $it ${it.heuristic}")
-        }
         return children.minWithOrNull { s1, s2 ->
             when {
                 s1.heuristic < s2.heuristic -> -1

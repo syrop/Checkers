@@ -26,7 +26,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
         setHasOptionsMenu(true)
         binding = FrGameBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        binding.viewModel = vm
+        binding.vm = vm
         return binding.root
     }
 
@@ -75,20 +75,23 @@ class GameFragment : Fragment(R.layout.fr_game) {
                 MotionEvent.ACTION_UP -> if (isInMovement) {
                     val x = binding.pieces.getX(event.rawX)
                     val y = binding.pieces.getY(event.rawY)
-                    val validKingMove = abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
-                            isKingInMovement
                     if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
                         abs(x - pickedFrom.first) == 1 &&
-                            y == pickedFrom.second - 1 ||
+                        y == pickedFrom.second - 1 ||
                         (abs(x - pickedFrom.first) == 2 &&
-                                    y == pickedFrom.second - 2) &&
-                                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
+                                y == pickedFrom.second - 2) &&
+                                vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
                         abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
                         isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
-                                        vm.stopMovement()
-                                        vm.addWhite(x, y, isKingInMovement)
-                                        vm.commitState()
-                                        vm.blackMove()
+                            vm.stopMovement()
+                            vm.addWhite(x, y, isKingInMovement)
+                            vm.commitState()
+                            if (vm.whiteWon()) {
+                                vm.setWhiteWon()
+                            }
+                            else {
+                                vm.blackMove()
+                            }
                     }
                     else {
                         vm.restoreState()

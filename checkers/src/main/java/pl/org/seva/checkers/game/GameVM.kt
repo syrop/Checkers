@@ -12,7 +12,6 @@ class GameVM : ViewModel() {
     var isWhiteMoving = true
 
     private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
-//    private var gameState = GameState(emptyList(), emptyList(), listOf(0 to 7), listOf(7 to 0))
 
     private lateinit var storedState: GameState
 
@@ -22,8 +21,17 @@ class GameVM : ViewModel() {
     private val _progressVisibility = MutableStateFlow(View.GONE)
     val progressVisibility: StateFlow<Int> = _progressVisibility
 
+    private val _whiteWon = MutableStateFlow(false)
+    val whiteWon: StateFlow<Boolean> = _whiteWon
+
+    private val _blackWon = MutableStateFlow(false)
+    val blackWon: StateFlow<Boolean> = _blackWon
+
     fun reset() {
         isWhiteMoving = true
+        _progressVisibility.value = View.GONE
+        _whiteWon.value = false
+        _blackWon.value = false
         gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
         _gameStateFlow.value = gameState
     }
@@ -77,8 +85,14 @@ class GameVM : ViewModel() {
         viewModelScope.launch {
             gameState = gameState.nextBlackMove()
             _gameStateFlow.value = gameState
-            isWhiteMoving = true
             _progressVisibility.value = View.GONE
+            if (blackWon()) {
+                _blackWon.value = true
+            }
+            else {
+                isWhiteMoving = true
+
+            }
         }
     }
 
@@ -95,6 +109,14 @@ class GameVM : ViewModel() {
         gameState = storedState.getChildOrNull(gameState)
             ?.apply { reduceLevel() } ?: gameState
     }
+
+    fun whiteWon() = gameState.whiteWon()
+
+    fun setWhiteWon() {
+        _whiteWon.value = true
+    }
+
+    private fun blackWon() = gameState.blackWon()
 
     companion object {
         val WHITE_START_POSITION = listOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)

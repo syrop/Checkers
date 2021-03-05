@@ -3,7 +3,7 @@
 
     <!-- Game fragment. -->
     <string name="game_label">Checkers</string>
-
     <string name="reset">Reset</string>
-
+    <string name="white_won">White won</string>
+    <string name="black_won">Black won</string>
 </resources>
