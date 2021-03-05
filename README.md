@@ -1,1 +1,3 @@
-Work in progress on implementation of checkers game.
+Concurrent implementation of [minimax] algorithm.
+
+[minimax]: https://en.wikipedia.org/wiki/Minimax
