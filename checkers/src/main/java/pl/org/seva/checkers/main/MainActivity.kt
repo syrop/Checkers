@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = AcMainBinding.inflate(layoutInflater, null, false)
+        binding.lifecycleOwner = this
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
