@@ -23,17 +23,17 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
-import pl.org.seva.checkers.databinding.FrGameBinding
+import pl.org.seva.checkers.databinding.FragmentGameBinding
 import kotlin.math.abs
 
-class GameFragment : Fragment(R.layout.fr_game) {
+class GameFragment : Fragment(R.layout.fragment_game) {
 
-    private lateinit var binding: FrGameBinding
+    private lateinit var binding: FragmentGameBinding
     private val vm by viewModels<GameVM>()
 
-    var isInMovement = false
-    var isKingInMovement = false
-    var pickedFrom = -1 to -1
+    private var isInMovement = false
+    private var isKingInMovement = false
+    private var pickedFrom = -1 to -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +41,7 @@ class GameFragment : Fragment(R.layout.fr_game) {
         savedInstanceState: Bundle?,
     ): View {
         setHasOptionsMenu(true)
-        binding = FrGameBinding.inflate(inflater, container, false)
+        binding = FragmentGameBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.vm = vm
         return binding.root

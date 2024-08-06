@@ -14,6 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <androidx.compose.ui.platform.ComposeView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <pl.org.seva.checkers.game.view.Board
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
