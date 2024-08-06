@@ -8,7 +8,6 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="pl.org.seva.checkers.game.GameFragment"
-        tools:layout="@layout/fragment_game"
         android:label="@string/game_label"/>
 
 </navigation>

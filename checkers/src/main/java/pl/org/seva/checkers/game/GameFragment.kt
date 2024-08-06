@@ -24,22 +24,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import pl.org.seva.checkers.R
-import pl.org.seva.checkers.databinding.FragmentGameBinding
 import pl.org.seva.checkers.game.view.Board
 import pl.org.seva.checkers.game.view.Pieces
 import kotlin.math.abs
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.sp
 
-class GameFragment : Fragment(R.layout.fragment_game) {
+class GameFragment : Fragment() {
 
-    private lateinit var binding: FragmentGameBinding
     private val vm by viewModels<GameVM>()
 
     private var isInMovement = false
@@ -124,49 +121,47 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         savedInstanceState: Bundle?,
     ): View {
         setHasOptionsMenu(true)
-        binding = FragmentGameBinding.inflate(inflater, container, false)
-        binding.compose.setContent {
-            Box {
-                Board { x, y ->
-                    vm.sizeX = x
-                    vm.sizeY = y
-                }
-                Pieces(vm.gameState, onTouchListener)
-                if (vm.progressVisibility) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator()
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Box {
+                    Board { x, y ->
+                        vm.sizeX = x
+                        vm.sizeY = y
                     }
-                }
-                if (vm.whiteWon) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            text = getString(R.string.white_won),
-                            fontSize = 34.sp,
-                        )
+                    Pieces(vm.gameState, onTouchListener)
+                    if (vm.progressVisibility) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                if (vm.blackWon) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            text = getString(R.string.black_won),
-                            fontSize = 34.sp,
-                        )
+                    if (vm.whiteWon) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                text = getString(R.string.white_won),
+                                fontSize = 34.sp,
+                            )
+                        }
+                    }
+                    if (vm.blackWon) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                text = getString(R.string.black_won),
+                                fontSize = 34.sp,
+                            )
+                        }
                     }
                 }
             }
         }
-        binding.lifecycleOwner = this
-        binding.vm = vm
-        return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
