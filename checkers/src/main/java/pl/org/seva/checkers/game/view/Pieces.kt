@@ -23,7 +23,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import pl.org.seva.checkers.R
 import pl.org.seva.checkers.game.GameState
 import java.lang.Float.min
 
@@ -32,12 +31,12 @@ class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var gameState = GameState(emptyList(), emptyList(), emptyList(), emptyList())
 
     private val whiteFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = resources.getColor(R.color.material_dynamic_primary80, null)
+        color = resources.getColor(com.google.android.material.R.color.material_dynamic_primary80, null)
         style = Paint.Style.FILL
     }
 
     private val blackFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = resources.getColor(R.color.material_dynamic_primary40, null)
+        color = resources.getColor(com.google.android.material.R.color.material_dynamic_primary40, null)
         style = Paint.Style.FILL
     }
 
