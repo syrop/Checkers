@@ -15,24 +15,15 @@
         android:layout_height="match_parent">
 
     <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-    <pl.org.seva.checkers.game.view.Board
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <pl.org.seva.checkers.game.view.Pieces
-        android:id="@+id/pieces"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        gameState="@{vm.gameStateFlow}"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="@{vm.progressVisibility}"/>
+        android:visibility="@{vm.progressVisibility ? View.VISIBLE : View.GONE}"/>
 
     <TextView
         android:layout_width="wrap_content"

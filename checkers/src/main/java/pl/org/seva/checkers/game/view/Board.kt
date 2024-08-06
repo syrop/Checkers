@@ -17,35 +17,36 @@
 
 package pl.org.seva.checkers.game.view
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.util.AttributeSet
-import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 
-class Board(context: Context, attrs: AttributeSet) : View(context, attrs) {
+@Composable
+fun Board(onSize: (x: Int, y: Int) -> Unit) {
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        with(canvas) {
-            val dx = right / 8f
-            val dy = bottom / 8f
-            repeat(8) { x ->
-                repeat(8) { y ->
-                    if (x % 2 != y % 2) {
-                        drawRect(x * dx, y * dy, (x + 1) * dx, (y + 1) * dy, BLACK_FILL)
-                    }
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .onGloballyPositioned { layoutCoordinates ->
+                onSize(layoutCoordinates.size.width, layoutCoordinates.size.height)
+            }
+    ) {
+        val dx = size.width / 8f
+        val dy = size.height / 8f
+        repeat(8) { x ->
+            repeat(8) { y ->
+                if (x % 2 != y % 2) {
+                    drawRect(
+                        color = Color.Black,
+                        topLeft = Offset(x * dx, y * dy),
+                        size = size / 8f
+                    )
                 }
             }
-        }
-    }
-
-    companion object {
-        private val BLACK_FILL = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.BLACK
-            style = Paint.Style.FILL
         }
     }
 }

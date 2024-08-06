@@ -20,11 +20,22 @@ package pl.org.seva.checkers.game
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import pl.org.seva.checkers.R
 import pl.org.seva.checkers.databinding.FragmentGameBinding
+import pl.org.seva.checkers.game.view.Board
+import pl.org.seva.checkers.game.view.Pieces
 import kotlin.math.abs
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 
 class GameFragment : Fragment(R.layout.fragment_game) {
 
@@ -35,23 +46,11 @@ class GameFragment : Fragment(R.layout.fragment_game) {
     private var isKingInMovement = false
     private var pickedFrom = -1 to -1
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        setHasOptionsMenu(true)
-        binding = FragmentGameBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        binding.vm = vm
-        return binding.root
-    }
+    private val onTouchListener = { event: MotionEvent ->
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fun predecessor(x1: Int, y1: Int, x2: Int, y2: Int): Pair<Int, Int> {
             if (abs(x2 - x1) != abs(y2 - y1) ||
-                    abs(x2 - x1) < 2 || abs(y2 - y1) < 2) return -1 to -1
+                abs(x2 - x1) < 2 || abs(y2 - y1) < 2) return -1 to -1
             val dirx = if (x2 - x1 > 0) 1 else -1
             val diry = if (y2 - y1 > 0) 1 else -1
             return x2 - dirx to y2 - diry
@@ -71,54 +70,108 @@ class GameFragment : Fragment(R.layout.fragment_game) {
             return vm.isEmpty(x, y) || vm.removeBlack(x to y)
         }
 
-        binding.pieces.setOnTouchListener { _, event ->
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
-                    val x = binding.pieces.getX(event.rawX)
-                    val y = binding.pieces.getY(event.rawY)
-                    vm.storeState()
-                    pickedFrom = x to y
-                    isKingInMovement = vm.containsWhiteKing(x, y)
-                    isInMovement = vm.removeWhite(x, y)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
+                val x = vm.getX(event.rawX)
+                val y = vm.getY(event.rawY)
+                vm.storeState()
+                pickedFrom = x to y
+                isKingInMovement = vm.containsWhiteKing(x, y)
+                isInMovement = vm.removeWhite(x, y)
+            }
+            MotionEvent.ACTION_MOVE -> if (isInMovement) {
+                if (isKingInMovement) {
+                    vm.moveWhiteKingTo(event.rawX.toInt(), event.rawY.toInt())
                 }
-                MotionEvent.ACTION_MOVE -> if (isInMovement) {
-                    if (isKingInMovement) {
-                        vm.moveWhiteKingTo(event.rawX.toInt(), event.rawY.toInt())
-                    }
-                    else {
-                        vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
-                    }
-                }
-                MotionEvent.ACTION_UP -> if (isInMovement) {
-                    val x = binding.pieces.getX(event.rawX)
-                    val y = binding.pieces.getY(event.rawY)
-                    if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
-                        abs(x - pickedFrom.first) == 1 &&
-                        y == pickedFrom.second - 1 ||
-                        (abs(x - pickedFrom.first) == 2 &&
-                                y == pickedFrom.second - 2) &&
-                                vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
-                        abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
-                        isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
-                            vm.stopMovement()
-                            vm.addWhite(x, y, isKingInMovement)
-                            vm.commitState()
-                            if (vm.whiteWon()) {
-                                vm.setWhiteWon()
-                            }
-                            else {
-                                vm.blackMove()
-                            }
-                    }
-                    else {
-                        vm.restoreState()
-                    }
-                    isKingInMovement = false
-                    isInMovement = false
+                else {
+                    vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
                 }
             }
-            true
+            MotionEvent.ACTION_UP -> if (isInMovement) {
+                val x = vm.getX(event.rawX)
+                val y = vm.getY(event.rawY)
+                if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
+                    abs(x - pickedFrom.first) == 1 &&
+                    y == pickedFrom.second - 1 ||
+                    (abs(x - pickedFrom.first) == 2 &&
+                            y == pickedFrom.second - 2) &&
+                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
+                    abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
+                    isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
+                    vm.stopMovement()
+                    vm.addWhite(x, y, isKingInMovement)
+                    vm.commitState()
+                    if (vm.whiteWon()) {
+                        vm.setWhiteWon()
+                    }
+                    else {
+                        vm.blackMove()
+                    }
+                }
+                else {
+                    vm.restoreState()
+                }
+                isKingInMovement = false
+                isInMovement = false
+            }
         }
+        true
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        setHasOptionsMenu(true)
+        binding = FragmentGameBinding.inflate(inflater, container, false)
+        binding.compose.setContent {
+            Box {
+                Board { x, y ->
+                    vm.sizeX = x
+                    vm.sizeY = y
+                }
+                Pieces(vm.gameState, onTouchListener)
+                if (vm.progressVisibility) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                if (vm.whiteWon) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = getString(R.string.white_won),
+                            fontSize = 34.sp,
+                        )
+                    }
+                }
+                if (vm.blackWon) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = getString(R.string.black_won),
+                            fontSize = 34.sp,
+                        )
+                    }
+                }
+            }
+        }
+        binding.lifecycleOwner = this
+        binding.vm = vm
+        return binding.root
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

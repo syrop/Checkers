@@ -18,6 +18,10 @@
 package pl.org.seva.checkers.game
 
 import android.view.View
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,29 +32,28 @@ class GameVM : ViewModel() {
 
     var isWhiteMoving = true
 
-    private var gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
+    var sizeX = 0
+    var sizeY = 0
 
     private lateinit var storedState: GameState
 
-    private val _gameStateFlow = MutableStateFlow(gameState)
-    val gameStateFlow: StateFlow<GameState> = _gameStateFlow
+    var gameState by mutableStateOf(GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList()))
 
-    private val _progressVisibility = MutableStateFlow(View.GONE)
-    val progressVisibility: StateFlow<Int> = _progressVisibility
+    var progressVisibility by mutableStateOf(false)
 
-    private val _whiteWon = MutableStateFlow(false)
-    val whiteWon: StateFlow<Boolean> = _whiteWon
+    var whiteWon by mutableStateOf(false)
+    var blackWon by mutableStateOf(false)
 
-    private val _blackWon = MutableStateFlow(false)
-    val blackWon: StateFlow<Boolean> = _blackWon
+    fun getX(x: Float) = x.toInt() * 8 / sizeX
+
+    fun getY(y: Float) = y.toInt() * 8 / sizeY - 1
 
     fun reset() {
         isWhiteMoving = true
-        _progressVisibility.value = View.GONE
-        _whiteWon.value = false
-        _blackWon.value = false
+        progressVisibility = false
+        whiteWon = false
+        blackWon = false
         gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
-        _gameStateFlow.value = gameState
     }
 
     fun containsWhiteKing(x: Int, y: Int) = gameState.containsWhiteKing(x to y)
@@ -58,7 +61,6 @@ class GameVM : ViewModel() {
     fun removeWhite(x: Int, y: Int): Boolean {
         val removed = gameState.removeWhite(x to y)
         val result = removed != gameState
-        _gameStateFlow.value = removed
         gameState = removed
         return result
     }
@@ -70,17 +72,14 @@ class GameVM : ViewModel() {
         else {
             gameState.addWhiteMan(x to y)
         }
-        _gameStateFlow.value = gameState
     }
 
     fun moveWhiteManTo(x: Int, y: Int) {
         gameState = gameState.copy(movingWhiteMan = x to y)
-        _gameStateFlow.value = gameState
     }
 
     fun moveWhiteKingTo(x: Int, y: Int) {
         gameState = gameState.copy(movingWhiteKing = x to y)
-        _gameStateFlow.value = gameState
     }
 
     fun stopMovement() {
@@ -98,17 +97,15 @@ class GameVM : ViewModel() {
 
     fun blackMove() {
         isWhiteMoving = false
-        _progressVisibility.value = View.VISIBLE
+        progressVisibility = true
         viewModelScope.launch {
             gameState = gameState.nextBlackMove()
-            _gameStateFlow.value = gameState
-            _progressVisibility.value = View.GONE
+            progressVisibility = false
             if (blackWon()) {
-                _blackWon.value = true
+                blackWon = true
             }
             else {
                 isWhiteMoving = true
-
             }
         }
     }
@@ -119,7 +116,6 @@ class GameVM : ViewModel() {
 
     fun restoreState() {
         gameState = storedState
-        _gameStateFlow.value = gameState
     }
 
     fun commitState() {
@@ -130,7 +126,7 @@ class GameVM : ViewModel() {
     fun whiteWon() = gameState.whiteWon()
 
     fun setWhiteWon() {
-        _whiteWon.value = true
+        whiteWon = true
     }
 
     private fun blackWon() = gameState.blackWon()

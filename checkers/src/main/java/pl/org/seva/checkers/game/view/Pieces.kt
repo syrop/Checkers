@@ -17,74 +17,89 @@
 
 package pl.org.seva.checkers.game.view
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.util.AttributeSet
-import android.view.View
+import android.view.MotionEvent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.res.colorResource
 import pl.org.seva.checkers.game.GameState
-import java.lang.Float.min
+import kotlin.math.min
 
-class Pieces(context: Context, attrs: AttributeSet) : View(context, attrs) {
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
 
-    private var gameState = GameState(emptyList(), emptyList(), emptyList(), emptyList())
+    val whiteColor = colorResource(com.google.android.material.R.color.material_dynamic_primary80)
+    val blackColor = colorResource(com.google.android.material.R.color.material_dynamic_primary40)
 
-    private val whiteFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = resources.getColor(com.google.android.material.R.color.material_dynamic_primary80, null)
-        style = Paint.Style.FILL
-    }
-
-    private val blackFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = resources.getColor(com.google.android.material.R.color.material_dynamic_primary40, null)
-        style = Paint.Style.FILL
-    }
-
-    fun setGameState(state: GameState) {
-        gameState = state
-        invalidate()
-    }
-
-    fun getX(x: Float) = x.toInt() * 8 / measuredWidth
-
-    fun getY(y: Float) = y.toInt() * 8 / measuredHeight - 1
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        with (canvas) {
-            val dx = right / 8f
-            val dy = bottom / 8f
-            val radius = min(dx, dy) / 2 * 0.85f
-            gameState.whiteMen.forEach { whiteMan ->
-                drawCircle(whiteMan.first * dx + dx / 2, whiteMan.second * dy + dy / 2, radius, whiteFill)
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInteropFilter { onTouchEvent ->
+                onTouchListener(onTouchEvent)
             }
-            gameState.blackMen.forEach { blackMan ->
-                drawCircle(blackMan.first * dx + dx / 2, blackMan.second * dy + dy / 2, radius, blackFill)
+    ) {
+        val dx = size.width / 8f
+        val dy = size.height / 8f
+
+        val radius = min(dx, dy) / 2 * 0.85f
+        gameState.whiteMen.forEach { man ->
+            translate(
+                -size.width / 2 + man.first * dx + dx / 2,
+                -size.height / 2 + man.second * dy + dy / 2
+            ) {
+                drawCircle(whiteColor, radius)
             }
-            gameState.whiteKings.forEach { whiteKing ->
-                drawCircle(whiteKing.first * dx + dx / 2, whiteKing.second * dy + dy / 2, radius, whiteFill)
-                drawCircle(whiteKing.first * dx + dx / 2, whiteKing.second * dy + dy / 2, radius / 2, CROWN)
+        }
+        gameState.blackMen.forEach { man ->
+            translate(
+                -size.width / 2 + man.first * dx + dx / 2,
+                -size.height / 2 + man.second * dy + dy / 2
+            ) {
+                drawCircle(blackColor, radius)
             }
-            gameState.blackKings.forEach { blackKing ->
-                drawCircle(blackKing.first * dx + dx / 2, blackKing.second * dy + dy / 2, radius, blackFill)
-                drawCircle(blackKing.first * dx + dx / 2, blackKing.second * dy + dy / 2, radius / 2, CROWN)
+        }
+        gameState.whiteKings.forEach { king ->
+            translate(
+                -size.width / 2 + king.first * dx + dx / 2,
+                -size.height / 2 + king.second * dy + dy / 2
+            ) {
+                drawCircle(whiteColor, radius)
+                drawCircle(Color.White, radius / 2)
             }
-            if (gameState.movingWhiteMan != -1 to -1) {
-                drawCircle(gameState.movingWhiteMan.first.toFloat(), gameState.movingWhiteMan.second.toFloat() - dy, radius, whiteFill)
+        }
+        gameState.blackKings.forEach { king ->
+            translate(
+                -size.width / 2 + king.first * dx + dx / 2,
+                -size.height / 2 + king.second * dy + dy / 2
+            ) {
+                drawCircle(blackColor, radius)
+                drawCircle(Color.White, radius / 2)
             }
-            if (gameState.movingWhiteKing != -1 to -1) {
-                drawCircle(gameState.movingWhiteKing.first.toFloat(), gameState.movingWhiteKing.second.toFloat() - dy, radius, whiteFill)
-                drawCircle(gameState.movingWhiteKing.first.toFloat(), gameState.movingWhiteKing.second.toFloat() - dy, radius / 2, CROWN)
+        }
+        if (gameState.movingWhiteMan != -1 to -1) {
+            translate(
+                gameState.movingWhiteMan.first.toFloat(),
+                gameState.movingWhiteMan.second.toFloat() - dy
+            ) {
+                drawCircle(whiteColor, radius)
+            }
+        }
+        if (gameState.movingWhiteKing != -1 to -1) {
+            translate(
+                gameState.movingWhiteKing.first.toFloat(),
+                gameState.movingWhiteKing.second.toFloat() - dy
+            ) {
+                drawCircle(whiteColor, radius)
+                drawCircle(Color.White, radius / 2)
             }
         }
     }
 
-    companion object {
-
-        private val CROWN = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            style = Paint.Style.FILL
-        }
-    }
 }
+
