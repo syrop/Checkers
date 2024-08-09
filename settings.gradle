@@ -1,1 +1,5 @@
 include ':checkers'
+include ':checkers-domain'
+include ':checkers-data'
+include ':checkers-presentation'
+include ':checkers-ui'

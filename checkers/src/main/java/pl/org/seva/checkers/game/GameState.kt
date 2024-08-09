@@ -28,7 +28,7 @@ data class GameState(
         val movingWhiteKing: Pair<Int, Int> = -1 to -1,
 ) {
 
-    var level = 0
+    private var level = 0
 
     private var heuristic = 0
 
