@@ -19,8 +19,9 @@ package pl.org.seva.checkers.main
 
 import android.app.Application
 import com.google.android.material.color.DynamicColors
+import dagger.hilt.android.HiltAndroidApp
 
-@Suppress("unused")
+@HiltAndroidApp
 class CheckersApplication : Application() {
 
     override fun onCreate() {
