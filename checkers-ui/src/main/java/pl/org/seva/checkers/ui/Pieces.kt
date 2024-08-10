@@ -84,7 +84,7 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
         if (gameState.movingWhiteMan != -1 to -1) {
             translate(
                 gameState.movingWhiteMan.first.toFloat(),
-                gameState.movingWhiteMan.second.toFloat() - dy
+                gameState.movingWhiteMan.second.toFloat()// - dy
             ) {
                 drawCircle(whiteColor, radius)
             }

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     namespace 'pl.org.seva.checkers'
@@ -79,7 +80,9 @@ dependencies {
     implementation 'androidx.compose.ui:ui-android:1.6.8'
     implementation 'androidx.compose.foundation:foundation-android:1.6.8'
     implementation 'androidx.compose.material3:material3-android:1.2.1'
+
     implementation 'com.google.dagger:hilt-android:2.48'
+    kapt "com.google.dagger:hilt-compiler:2.48"
 
     // Testing
     androidTestImplementation 'androidx.test:core:1.6.1'

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="pl.org.seva.checkers.game.GameFragment"
+        android:name="pl.org.seva.checkers.ui.view.GameFragment"
         android:label="@string/game_label"/>
 
 </navigation>
