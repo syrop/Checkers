@@ -1,8 +1,7 @@
 package com.favedish.presentation.restaurantdetails.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.favedish.domain.cleanarchitecture.usecase.UseCaseExecutor
-import com.favedish.domain.restaurantdetails.model.DishDomainModel
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCaseExecutor
 import com.favedish.domain.restaurantdetails.usecase.GetDishesUseCase
 import com.favedish.presentation.restaurantdetails.mapper.DishDomainToPresentationMapper
 import com.favedish.presentation.restaurantdetails.model.DishPresentationModel

@@ -1,6 +1,5 @@
 package com.favedish.presentation.restaurantdetails.viewmodel
 
-import com.favedish.domain.restaurantdetails.model.DishDomainModel
 import com.favedish.domain.restaurantdetails.usecase.GetDishesUseCase
 import com.favedish.presentation.architecture.viewmodel.BaseViewModel
 import com.favedish.presentation.architecture.viewmodel.usecase.UseCaseExecutorProvider

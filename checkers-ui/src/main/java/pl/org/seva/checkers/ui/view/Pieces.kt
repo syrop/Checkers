@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pl.org.seva.checkers.ui
+package pl.org.seva.checkers.ui.view
 
 import android.view.MotionEvent
 import androidx.compose.foundation.Canvas
@@ -27,11 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.colorResource
+import pl.org.seva.checkers.ui.model.PiecesUiModel
 import kotlin.math.min
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
+fun Pieces(piecesModel: PiecesUiModel, onTouchListener: (MotionEvent) -> Boolean) {
 
     val whiteColor = colorResource(com.google.android.material.R.color.material_dynamic_primary80)
     val blackColor = colorResource(com.google.android.material.R.color.material_dynamic_primary40)
@@ -47,7 +48,7 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
         val dy = size.height / 8f
 
         val radius = min(dx, dy) / 2 * 0.85f
-        gameState.whiteMen.forEach { man ->
+        piecesModel.whiteMen.forEach { man ->
             translate(
                 -size.width / 2 + man.first * dx + dx / 2,
                 -size.height / 2 + man.second * dy + dy / 2
@@ -55,7 +56,7 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
                 drawCircle(whiteColor, radius)
             }
         }
-        gameState.blackMen.forEach { man ->
+        piecesModel.blackMen.forEach { man ->
             translate(
                 -size.width / 2 + man.first * dx + dx / 2,
                 -size.height / 2 + man.second * dy + dy / 2
@@ -63,7 +64,7 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
                 drawCircle(blackColor, radius)
             }
         }
-        gameState.whiteKings.forEach { king ->
+        piecesModel.whiteKings.forEach { king ->
             translate(
                 -size.width / 2 + king.first * dx + dx / 2,
                 -size.height / 2 + king.second * dy + dy / 2
@@ -72,7 +73,7 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
                 drawCircle(Color.White, radius / 2)
             }
         }
-        gameState.blackKings.forEach { king ->
+        piecesModel.blackKings.forEach { king ->
             translate(
                 -size.width / 2 + king.first * dx + dx / 2,
                 -size.height / 2 + king.second * dy + dy / 2
@@ -81,18 +82,18 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
                 drawCircle(Color.White, radius / 2)
             }
         }
-        if (gameState.movingWhiteMan != -1 to -1) {
+        if (piecesModel.movingWhiteMan != -1 to -1) {
             translate(
-                gameState.movingWhiteMan.first.toFloat() - size.width / 2,
-                gameState.movingWhiteMan.second.toFloat() - dy - size.height / 2,
+                piecesModel.movingWhiteMan.first.toFloat() - size.width / 2,
+                piecesModel.movingWhiteMan.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
             }
         }
-        if (gameState.movingWhiteKing != -1 to -1) {
+        if (piecesModel.movingWhiteKing != -1 to -1) {
             translate(
-                gameState.movingWhiteKing.first.toFloat() - size.width / 2,
-                gameState.movingWhiteKing.second.toFloat() - dy - size.height / 2,
+                piecesModel.movingWhiteKing.first.toFloat() - size.width / 2,
+                piecesModel.movingWhiteKing.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
                 drawCircle(Color.White, radius / 2)

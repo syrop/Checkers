@@ -1,73 +1,92 @@
-/*
- * Copyright (C) 2021 Wiktor Nizio
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+package pl.org.seva.checkers.domain.game
 
-package pl.org.seva.checkers.ui
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.BackgroundExecutingUseCase
+import pl.org.seva.checkers.domain.game.model.PiecesDomainModel
+import pl.org.seva.checkers.domain.game.repository.PiecesRepository
 
-import kotlinx.coroutines.*
+class BlackMoveUseCase(val piecesRepository: PiecesRepository): BackgroundExecutingUseCase<String, String>() {
 
-data class GameState(
-        val whiteMen: List<Pair<Int, Int>>,
-        val blackMen: List<Pair<Int, Int>>,
-        val whiteKings: List<Pair<Int, Int>>,
-        val blackKings: List<Pair<Int, Int>>,
-        val movingWhiteMan: Pair<Int, Int> = -1 to -1,
-        val movingWhiteKing: Pair<Int, Int> = -1 to -1,
-) {
+    override fun executeInBackground(request: String): String {
 
-    private var level = 0
+        fun PiecesDomainModel.whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
 
-    private var heuristic = 0
+        fun PiecesDomainModel.blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
 
-    private val children = mutableListOf<GameState>()
+        fun PiecesDomainModel.removeWhite(pair: Pair<Int, Int>) = copy(
+            whiteMen = whiteMen.filter { it != pair },
+            whiteKings = whiteKings.filter { it != pair },
+        )
 
-    private suspend fun populateChildren(): Unit = coroutineScope {
-        fun isValidAndEmpty(pair: Pair<Int, Int>) = pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
+        fun PiecesDomainModel.removeBlack(pair: Pair<Int, Int>) = copy(
+            blackMen = blackMen.filter { it != pair },
+            blackKings = blackKings.filter { it != pair },
+        )
 
-        fun GameState.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
+        fun PiecesDomainModel.containsWhiteKing(pair: Pair<Int, Int>) = whiteKings.contains(pair)
+
+        fun PiecesDomainModel.containsBlack(pair: Pair<Int, Int>) =
+            blackMen.contains(pair) || blackKings.contains(pair)
+
+        fun PiecesDomainModel.containsWhite(pair: Pair<Int, Int>) =
+            whiteMen.contains(pair) || whiteKings.contains(pair)
+
+
+        fun PiecesDomainModel.isEmpty(pair: Pair<Int, Int>) =
+            !this.containsWhite(pair) && !containsBlack(pair)
+
+        fun PiecesDomainModel.isValidAndEmpty(pair: Pair<Int, Int>) =
+            pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
+
+        fun PiecesDomainModel.addWhiteMan(pair: Pair<Int, Int>) = copy(
+            whiteMen = whiteMen + pair,
+        )
+
+        fun PiecesDomainModel.addBlackMan(pair: Pair<Int, Int>) = copy(
+            blackMen = blackMen + pair,
+        )
+
+        fun PiecesDomainModel.addWhiteKing(pair: Pair<Int, Int>) = copy(
+            whiteKings = whiteKings + pair,
+        )
+
+        fun PiecesDomainModel.addBlackKing(pair: Pair<Int, Int>) = copy(
+            blackKings = blackKings + pair,
+        )
+
+        fun PiecesDomainModel.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
             addBlackKing(pair)
-        }
-        else {
+        } else {
             addBlackMan(pair)
         }
 
-        fun GameState.addWhite(pair: Pair<Int, Int>) = if (pair.second == 0) {
+        fun PiecesDomainModel.addWhite(pair: Pair<Int, Int>) = if (pair.second == 0) {
             addWhiteKing(pair)
-        }
-        else {
+        } else {
             addWhiteMan(pair)
         }
 
-        fun GameState.kingMoves(pair: Pair<Int, Int>, dirx: Int, diry: Int): List<GameState> {
-            val result = mutableListOf<GameState>()
+        fun PiecesDomainModel.kingMoves(
+            pair: Pair<Int, Int>,
+            dirx: Int,
+            diry: Int
+        ): List<PiecesDomainModel> {
+            val result = mutableListOf<PiecesDomainModel>()
             var (x, y) = pair
             while (true) {
                 x += dirx
                 y += diry
                 if (isValidAndEmpty(x to y)) {
                     result.add(if (level % 2 == 0) addBlackKing(x to y) else addWhiteKing(x to y))
-                }
-                else break
+                } else break
             }
             if (level % 2 == 0) { // capturing white
                 if (containsWhite(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
                     result.add(removeWhite(x to y).addBlackKing(x + dirx to y + diry))
                 }
-            }
-            else { // capturing black
+            } else { // capturing black
                 if (containsBlack(x to y) && isValidAndEmpty(x + dirx to y + diry)) {
                     result.add(removeBlack(x to y).addWhiteKing(x + dirx to y + diry))
                 }
@@ -75,18 +94,21 @@ data class GameState(
             return result
         }
 
-        if (level == DEPTH) {
-            return@coroutineScope
-        }
-        if (children.isEmpty()) {
+        suspend fun PiecesDomainModel.getChildren(): List<PiecesDomainModel> = coroutineScope {
+
+            val result = mutableListOf<PiecesDomainModel>()
+
+            if (level == DEPTH) {
+                return@coroutineScope result
+            }
             if (level % 2 == 0) { // black moves
                 val men = async(Dispatchers.Default) {
-                    mutableListOf<GameState>().apply {
+                    mutableListOf<PiecesDomainModel>().apply {
                         blackMen
                             .map { blackMan -> // asynchronously list of moves of this one man
                                 async(Dispatchers.Default) {
                                     val removed = removeBlack(blackMan)
-                                    mutableListOf<GameState>().apply {
+                                    mutableListOf<PiecesDomainModel>().apply {
                                         val blackManMovesLeft =
                                             blackMan.first - 1 to blackMan.second + 1
                                         if (isValidAndEmpty(blackManMovesLeft)) {
@@ -127,12 +149,12 @@ data class GameState(
                     }
                 }
                 val kings = async(Dispatchers.Default) {
-                    mutableListOf<GameState>().apply {
+                    mutableListOf<PiecesDomainModel>().apply {
                         blackKings
                             .map { blackKing ->
                                 async(Dispatchers.Default) {
                                     val removed = removeBlack(blackKing)
-                                    mutableListOf<GameState>().apply {
+                                    mutableListOf<PiecesDomainModel>().apply {
                                         addAll(removed.kingMoves(blackKing, -1, -1))
                                         addAll(removed.kingMoves(blackKing, -1, +1))
                                         addAll(removed.kingMoves(blackKing, +1, -1))
@@ -144,16 +166,14 @@ data class GameState(
                             .onEach { addAll(it) }
                     }
                 }
-                children.addAll(men.await())
-                children.addAll(kings.await())
             } else { // white moves
                 val men = async(Dispatchers.Default) {
-                    mutableListOf<GameState>().apply {
+                    mutableListOf<PiecesDomainModel>().apply {
                         whiteMen
                             .map { whiteMan -> // asynchronously list of moves of this one man
                                 async(Dispatchers.Default) {
                                     val removed = removeWhite(whiteMan)
-                                    mutableListOf<GameState>().apply {
+                                    mutableListOf<PiecesDomainModel>().apply {
                                         val whiteManMovesLeft =
                                             whiteMan.first - 1 to whiteMan.second - 1
                                         if (isValidAndEmpty(whiteManMovesLeft)) {
@@ -194,12 +214,12 @@ data class GameState(
                     }
                 }
                 val kings = async(Dispatchers.Default) {
-                    mutableListOf<GameState>().apply {
+                    mutableListOf<PiecesDomainModel>().apply {
                         whiteKings
                             .map { whiteKing ->
                                 async(Dispatchers.Default) {
                                     val removed = removeWhite(whiteKing)
-                                    mutableListOf<GameState>().apply {
+                                    mutableListOf<PiecesDomainModel>().apply {
                                         addAll(removed.kingMoves(whiteKing, -1, -1))
                                         addAll(removed.kingMoves(whiteKing, -1, +1))
                                         addAll(removed.kingMoves(whiteKing, +1, -1))
@@ -211,106 +231,16 @@ data class GameState(
                             .onEach { addAll(it) }
                     }
                 }
-                children.addAll(men.await())
-                children.addAll(kings.await())
             }
-            children.onEach { it.level = level +1 }
-        } // if (children.isEmpty())
-        children
-            .map { child ->
-                launch(Dispatchers.Default) {
-                    child.populateChildren()
-                }
-            }
-            .joinAll()
-    }
-
-    fun whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
-
-    fun blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
-
-    private fun updateHeuristic() {
-        fun heuristic() = whiteMen.size + whiteKings.size * KINGS_WEIGHT -
-                blackMen.size - blackKings.size * KINGS_WEIGHT
-        heuristic = if (level == 1 && blackWon()) Int.MIN_VALUE // computer wins in one move
-        else if (level == DEPTH) heuristic()
-        else {
-            children.forEach { it.updateHeuristic() }
-            when {
-                children.isEmpty() -> heuristic()
-                level % 2 == 0 -> { // black moves
-                    children.minOf { it.heuristic }
-                }
-                else -> { // white moves
-                    children.maxOf { it.heuristic }
-                }
-            }
+            return@coroutineScope result.map { it.copy(level = level + 1) }
         }
+
+        return request
     }
-
-    suspend fun nextBlackMove(): GameState {
-        populateChildren()
-        updateHeuristic()
-        return children.minWithOrNull { s1, s2 ->
-            when {
-                s1.heuristic < s2.heuristic -> -1
-                s1.heuristic == s2.heuristic -> 0
-                else -> 1
-            }
-        } ?: GameState(emptyList(), emptyList(), emptyList(), emptyList())
-    }
-
-    fun isEmpty(pair: Pair<Int, Int>) = !containsWhite(pair) && !containsBlack(pair)
-
-    private fun containsWhite(pair: Pair<Int, Int>) = whiteMen.contains(pair) || whiteKings.contains(pair)
-
-    private fun containsBlack(pair: Pair<Int, Int>) = blackMen.contains(pair) || blackKings.contains(pair)
-
-    fun removeWhite(pair: Pair<Int, Int>) = copy(
-        whiteMen = whiteMen.filter { it != pair },
-        whiteKings = whiteKings.filter { it != pair },
-    )
-
-    fun removeBlack(pair: Pair<Int, Int>) = copy(
-        blackMen = blackMen.filter { it != pair },
-        blackKings = blackKings.filter { it != pair },
-    )
-
-    fun addWhiteMan(pair: Pair<Int, Int>) = copy(
-        whiteMen = whiteMen + pair,
-    )
-
-    private fun addBlackMan(pair: Pair<Int, Int>) = copy(
-        blackMen = blackMen + pair,
-    )
-
-    fun addWhiteKing(pair: Pair<Int, Int>) = copy(
-        whiteKings = whiteKings + pair,
-    )
-
-    private fun addBlackKing(pair: Pair<Int, Int>) = copy(
-        blackKings = blackKings + pair,
-    )
-
-    fun stopMovement() = copy(
-        movingWhiteMan = -1 to -1,
-        movingWhiteKing = -1 to -1,
-    )
-
-    fun getChildOrNull(state: GameState): GameState? {
-        val id = children.indexOf(state)
-        return if (id >= 0) children[id] else null
-    }
-
-    fun reduceLevel() {
-        level -= 2
-        children.onEach { it.reduceLevel() }
-    }
-
-    fun containsWhiteKing(pair: Pair<Int, Int>) = whiteKings.contains(pair)
 
     companion object {
         const val DEPTH = 4 // higher than 5 has a significant performance impact
         const val KINGS_WEIGHT = 4
     }
+
 }

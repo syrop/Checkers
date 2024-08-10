@@ -1,14 +1,13 @@
-package com.favedish.domain.cleanarchitecture.usecase
+package pl.org.seva.checkers.domain.cleanarchitecture.usecase
 
-import com.favedish.domain.cleanarchitecture.exception.DomainException
-import com.favedish.domain.cleanarchitecture.exception.UnknownDomainException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
+import pl.org.seva.checkers.domain.cleanarchitecture.exception.UnknownDomainException
 import kotlin.coroutines.cancellation.CancellationException
 
-class UseCaseExecutor(
-    private val coroutineScope: CoroutineScope
-) {
+class UseCaseExecutor(private val coroutineScope: CoroutineScope) {
+
     fun <OUTPUT> execute(
         useCase: UseCase<Unit, OUTPUT>,
         onSuccess: (OUTPUT) -> Unit = {},

@@ -17,16 +17,11 @@
 
 package pl.org.seva.checkers.ui
 
-import android.view.View
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import pl.org.seva.checkers.ui.model.PiecesUiModel
 
 class GameVM : ViewModel() {
 
@@ -35,101 +30,46 @@ class GameVM : ViewModel() {
     var sizeX = 0
     var sizeY = 0
 
-    private lateinit var storedState: GameState
+    private lateinit var storedState: PiecesUiModel
 
-    var gameState by mutableStateOf(GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList()))
+    private var piecesState by mutableStateOf(
+        PiecesUiModel(
+            WHITE_START_POSITION,
+            BLACK_START_POSITION,
+            emptyList(),
+            emptyList()
+        )
+    )
 
-    var progressVisibility by mutableStateOf(false)
+    var isProgressVisible by mutableStateOf(false)
 
     var whiteWon by mutableStateOf(false)
     var blackWon by mutableStateOf(false)
 
-    fun getX(x: Float) = x.toInt() * 8 / sizeX
-
-    fun getY(y: Float) = y.toInt() * 8 / sizeY - 1
-
     fun reset() {
         isWhiteMoving = true
-        progressVisibility = false
+        isProgressVisible = false
         whiteWon = false
         blackWon = false
-        gameState = GameState(WHITE_START_POSITION, BLACK_START_POSITION, emptyList(), emptyList())
-    }
-
-    fun containsWhiteKing(x: Int, y: Int) = gameState.containsWhiteKing(x to y)
-
-    fun removeWhite(x: Int, y: Int): Boolean {
-        val removed = gameState.removeWhite(x to y)
-        val result = removed != gameState
-        gameState = removed
-        return result
-    }
-
-    fun addWhite(x: Int, y: Int, forceKing: Boolean = false) {
-        gameState = if (forceKing || y == 0) {
-            gameState.addWhiteKing(x to y)
-        }
-        else {
-            gameState.addWhiteMan(x to y)
-        }
-    }
-
-    fun moveWhiteManTo(x: Int, y: Int) {
-        gameState = gameState.copy(movingWhiteMan = x to y)
-    }
-
-    fun moveWhiteKingTo(x: Int, y: Int) {
-        gameState = gameState.copy(movingWhiteKing = x to y)
-    }
-
-    fun stopMovement() {
-        gameState = gameState.stopMovement()
-    }
-
-    fun removeBlack(pair: Pair<Int, Int>): Boolean {
-        val removed = gameState.removeBlack(pair)
-        val result = gameState != removed
-        gameState = removed
-        return result
-    }
-
-    fun isEmpty(x: Int, y: Int) = gameState.isEmpty(x to y)
-
-    fun blackMove() {
-        isWhiteMoving = false
-        progressVisibility = true
-        viewModelScope.launch {
-            gameState = gameState.nextBlackMove()
-            progressVisibility = false
-            if (blackWon()) {
-                blackWon = true
-            }
-            else {
-                isWhiteMoving = true
-            }
-        }
+        piecesState = PiecesUiModel(
+            WHITE_START_POSITION,
+            BLACK_START_POSITION,
+            emptyList(),
+            emptyList()
+        )
     }
 
     fun storeState() {
-        storedState = gameState
+        storedState = piecesState
     }
 
     fun restoreState() {
-        gameState = storedState
+        piecesState = storedState
     }
-
-    fun commitState() {
-        gameState = storedState.getChildOrNull(gameState)
-            ?.apply { reduceLevel() } ?: gameState
-    }
-
-    fun whiteWon() = gameState.whiteWon()
 
     fun setWhiteWon() {
         whiteWon = true
     }
-
-    private fun blackWon() = gameState.blackWon()
 
     companion object {
         val WHITE_START_POSITION = listOf(0 to 7, 1 to 6, 2 to 7, 3 to 6, 4 to 7, 5 to 6, 6 to 7, 7 to 6, 0 to 5, 2 to 5, 4 to 5, 6 to 5)

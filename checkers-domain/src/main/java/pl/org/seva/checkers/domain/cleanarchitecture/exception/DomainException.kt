@@ -1,4 +1,4 @@
-package com.favedish.domain.cleanarchitecture.exception
+package pl.org.seva.checkers.domain.cleanarchitecture.exception
 
 abstract class DomainException(throwable: Throwable) : Exception(throwable) {
     constructor(message: String) : this(Exception(message))

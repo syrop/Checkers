@@ -33,9 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
-import pl.org.seva.checkers.ui.Board
 import pl.org.seva.checkers.ui.GameVM
-import pl.org.seva.checkers.ui.Pieces
 
 @AndroidEntryPoint
 class GameFragment : Fragment() {
@@ -132,7 +130,7 @@ class GameFragment : Fragment() {
                         vm.sizeY = y
                     }
                     Pieces(vm.gameState, onTouchListener)
-                    if (vm.progressVisibility) {
+                    if (vm.isProgressVisible) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()

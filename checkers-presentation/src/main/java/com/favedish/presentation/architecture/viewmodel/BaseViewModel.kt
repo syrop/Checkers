@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.favedish.domain.cleanarchitecture.exception.DomainException
-import com.favedish.domain.cleanarchitecture.usecase.UseCase
+import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
 import com.favedish.presentation.architecture.model.PresentationDestination
 import com.favedish.presentation.architecture.viewmodel.livedata.SingleLiveEvent
 import com.favedish.presentation.architecture.viewmodel.usecase.UseCaseExecutorProvider

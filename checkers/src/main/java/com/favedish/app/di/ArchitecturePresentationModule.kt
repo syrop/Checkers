@@ -1,7 +1,7 @@
 package com.favedish.app.di
 
 import com.favedish.domain.cleanarchitecture.coroutine.CoroutineContextProvider
-import com.favedish.domain.cleanarchitecture.usecase.UseCaseExecutor
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCaseExecutor
 import com.favedish.presentation.architecture.viewmodel.coroutine.AppCoroutineContextProvider
 import com.favedish.presentation.architecture.viewmodel.usecase.UseCaseExecutorProvider
 import dagger.Module

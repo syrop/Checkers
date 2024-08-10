@@ -1,7 +1,7 @@
 package com.favedish.test.viewmodel
 
-import com.favedish.domain.cleanarchitecture.usecase.UseCase
-import com.favedish.domain.cleanarchitecture.usecase.UseCaseExecutor
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
+import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCaseExecutor
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.given

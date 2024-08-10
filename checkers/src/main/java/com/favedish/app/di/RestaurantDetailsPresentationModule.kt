@@ -1,7 +1,7 @@
 package com.favedish.app.di
 
 import com.favedish.domain.cleanarchitecture.coroutine.CoroutineContextProvider
-import com.favedish.domain.restaurantdetails.repository.RestaurantDetailsRepository
+import pl.org.seva.checkers.domain.game.repository.RestaurantDetailsRepository
 import com.favedish.domain.restaurantdetails.usecase.GetDishesUseCase
 import com.favedish.presentation.restaurantdetails.mapper.DishDomainToPresentationMapper
 import dagger.Module

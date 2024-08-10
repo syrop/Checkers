@@ -1,7 +1,6 @@
 package com.favedish.app.di
 
-import com.favedish.domain.restaurantdetails.repository.RestaurantDetailsDummyRepository
-import com.favedish.domain.restaurantdetails.repository.RestaurantDetailsRepository
+import pl.org.seva.checkers.domain.game.repository.RestaurantDetailsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
