@@ -83,16 +83,16 @@ fun Pieces(gameState: GameState, onTouchListener: (MotionEvent) -> Boolean) {
         }
         if (gameState.movingWhiteMan != -1 to -1) {
             translate(
-                gameState.movingWhiteMan.first.toFloat(),
-                gameState.movingWhiteMan.second.toFloat()// - dy
+                gameState.movingWhiteMan.first.toFloat() - size.width / 2,
+                gameState.movingWhiteMan.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
             }
         }
         if (gameState.movingWhiteKing != -1 to -1) {
             translate(
-                gameState.movingWhiteKing.first.toFloat(),
-                gameState.movingWhiteKing.second.toFloat() - dy
+                gameState.movingWhiteKing.first.toFloat() - size.width / 2,
+                gameState.movingWhiteKing.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
                 drawCircle(Color.White, radius / 2)
