@@ -14,8 +14,8 @@ data class PiecesPresentationModel(
     private fun containsBlack(pair: Pair<Int, Int>) = blackMen.contains(pair) || blackKings.contains(pair)
 
     fun removeWhite(pair: Pair<Int, Int>) = copy(
-        blackMen = whiteMen.filter { it != pair },
-        blackKings = whiteKings.filter { it != pair },
+        whiteMen = whiteMen.filter { it != pair },
+        whiteKings = whiteKings.filter { it != pair },
     )
 
     fun removeBlack(pair: Pair<Int, Int>) = copy(

@@ -74,7 +74,7 @@ class GameFragment : Fragment() {
         }
 
         when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving()) {
+            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
                 val x = vm.getX(event.rawX)
                 val y = vm.getY(event.rawY)
                 vm.storeState()

@@ -25,6 +25,7 @@ class GameViewModel @Inject constructor(
     useCaseExecutorProvider,
 ) {
 
+    var isWhiteMoving = true
     var whiteWon by mutableStateOf(false)
     var blackWon by mutableStateOf(false)
 
@@ -41,6 +42,7 @@ class GameViewModel @Inject constructor(
     override fun initialState() = PiecesViewState()
 
     fun blackMove() {
+        isWhiteMoving = false
         execute(blackMoveUseCase, Unit, ::presentPieces)
     }
 
@@ -69,6 +71,7 @@ class GameViewModel @Inject constructor(
     fun reset() {
         whiteWon = false
         blackWon = false
+        isWhiteMoving = true
         updateViewState(initialState())
         fetchPieces()
     }
@@ -104,9 +107,9 @@ class GameViewModel @Inject constructor(
 
     fun stopMovement() = updateViewState(viewState.stopMovement())
 
-    fun isWhiteMoving() = viewState.movingWhiteMan != -1 to -1
-
     private fun presentPieces(pieces: PiecesDomainModel) {
+        isWhiteMoving = true
         updateViewState { withPieces(piecesDomainToPresentationMapper.toPresentation(pieces)) }
     }
+
 }
