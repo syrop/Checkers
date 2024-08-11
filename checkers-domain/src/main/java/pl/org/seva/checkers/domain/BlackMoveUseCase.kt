@@ -9,9 +9,9 @@ import pl.org.seva.checkers.domain.repository.PiecesRepository
 
 class BlackMoveUseCase(
     private val piecesRepository: PiecesRepository,
-): BackgroundExecutingUseCase<PiecesDomainModel, PiecesDomainModel>() {
+) : BackgroundExecutingUseCase<Unit, PiecesDomainModel>() {
 
-    override fun executeInBackground(request: PiecesDomainModel): PiecesDomainModel {
+    override fun executeInBackground(request: Unit): PiecesDomainModel {
 
         fun PiecesDomainModel.whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
 
@@ -243,9 +243,7 @@ class BlackMoveUseCase(
         }
 
         val pieces = piecesRepository[piecesRepository.root]
-
-        return request
-
+        return pieces
     }
 
     companion object {

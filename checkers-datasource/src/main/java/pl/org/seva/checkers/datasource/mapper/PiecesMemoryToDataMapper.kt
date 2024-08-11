@@ -3,7 +3,7 @@ package pl.org.seva.checkers.datasource.mapper
 import pl.org.seva.checkers.data.model.PiecesResponseDataModel
 import pl.org.seva.checkers.datasource.model.PiecesMemoryModel
 
-class PiecesMemoryToResponseMapper {
+class PiecesMemoryToDataMapper {
 
     fun toData(input: PiecesMemoryModel) = PiecesResponseDataModel(
         input.id,

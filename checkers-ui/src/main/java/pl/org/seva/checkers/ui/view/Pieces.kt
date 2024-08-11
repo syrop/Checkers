@@ -32,7 +32,11 @@ import kotlin.math.min
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Pieces(piecesModel: PiecesUiModel, onTouchListener: (MotionEvent) -> Boolean) {
+fun Pieces(
+    piecesModel: PiecesUiModel,
+    movingWhiteMan: Pair<Int, Int>,
+    movingWhiteKing: Pair<Int, Int>,
+    onTouchListener: (MotionEvent) -> Boolean) {
 
     val whiteColor = colorResource(com.google.android.material.R.color.material_dynamic_primary80)
     val blackColor = colorResource(com.google.android.material.R.color.material_dynamic_primary40)
@@ -82,18 +86,18 @@ fun Pieces(piecesModel: PiecesUiModel, onTouchListener: (MotionEvent) -> Boolean
                 drawCircle(Color.White, radius / 2)
             }
         }
-        if (piecesModel.movingWhiteMan != -1 to -1) {
+        if (movingWhiteMan != -1 to -1) {
             translate(
-                piecesModel.movingWhiteMan.first.toFloat() - size.width / 2,
-                piecesModel.movingWhiteMan.second.toFloat() - dy - size.height / 2,
+                movingWhiteMan.first.toFloat() - size.width / 2,
+                movingWhiteMan.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
             }
         }
-        if (piecesModel.movingWhiteKing != -1 to -1) {
+        if (movingWhiteKing != -1 to -1) {
             translate(
-                piecesModel.movingWhiteKing.first.toFloat() - size.width / 2,
-                piecesModel.movingWhiteKing.second.toFloat() - dy - size.height / 2,
+                movingWhiteKing.first.toFloat() - size.width / 2,
+                movingWhiteKing.second.toFloat() - dy - size.height / 2,
             ) {
                 drawCircle(whiteColor, radius)
                 drawCircle(Color.White, radius / 2)

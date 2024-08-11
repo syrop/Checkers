@@ -33,12 +33,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
-import pl.org.seva.checkers.ui.GameVM
+import pl.org.seva.checkers.presentation.viewmodel.GameViewModel
+import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GameFragment : Fragment() {
 
-    private val vm by viewModels<GameVM>()
+    @Inject
+    lateinit var piecesPresentationToUiMapper: PiecesPresentationToUiMapper
+
+    private val vm by viewModels<GameViewModel>()
 
     private var isInMovement = false
     private var isKingInMovement = false
@@ -69,7 +74,7 @@ class GameFragment : Fragment() {
         }
 
         when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
+            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving()) {
                 val x = vm.getX(event.rawX)
                 val y = vm.getY(event.rawY)
                 vm.storeState()
@@ -98,8 +103,7 @@ class GameFragment : Fragment() {
                     isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
                     vm.stopMovement()
                     vm.addWhite(x, y, isKingInMovement)
-                    vm.commitState()
-                    if (vm.whiteWon()) {
+                    if (vm.viewState.pieces.whiteMen.toSet().isEmpty()) {
                         vm.setWhiteWon()
                     }
                     else {
@@ -129,8 +133,13 @@ class GameFragment : Fragment() {
                         vm.sizeX = x
                         vm.sizeY = y
                     }
-                    Pieces(vm.gameState, onTouchListener)
-                    if (vm.isProgressVisible) {
+                    Pieces(
+                        piecesPresentationToUiMapper.toUi(vm.viewState.pieces),
+                        vm.viewState.movingWhiteMan,
+                        vm.viewState.movingWhiteKing,
+                        onTouchListener,
+                    )
+                    if (vm.viewState.isLoading) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
@@ -167,7 +176,7 @@ class GameFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        vm.fetchPieces()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
