@@ -1,5 +1,0 @@
-package com.favedish.presentation.dishdetails.destination
-
-import com.favedish.presentation.architecture.model.PresentationDestination
-
-sealed interface DishDetailsPresentationDestination : PresentationDestination

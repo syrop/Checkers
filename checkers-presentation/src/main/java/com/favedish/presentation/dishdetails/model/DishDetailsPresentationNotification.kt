@@ -1,3 +1,0 @@
-package com.favedish.presentation.dishdetails.model
-
-class DishDetailsPresentationNotification
