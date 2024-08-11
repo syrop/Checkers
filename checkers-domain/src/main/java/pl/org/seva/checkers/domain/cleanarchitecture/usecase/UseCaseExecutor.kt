@@ -25,8 +25,10 @@ class UseCaseExecutor(private val coroutineScope: CoroutineScope) {
         coroutineScope.launch {
             try {
                 useCase.execute(value, onSuccess)
-            } catch (ignore: CancellationException) {
-            } catch (throwable: Throwable) {
+            }
+            catch (ignore: CancellationException) {
+            }
+            catch (throwable: Throwable) {
                 onException(
                     (throwable as? DomainException)
                         ?: UnknownDomainException(throwable)

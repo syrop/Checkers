@@ -11,6 +11,7 @@ import pl.org.seva.checkers.data.repository.PiecesLiveRepository
 import pl.org.seva.checkers.domain.usecase.BlackMoveUseCase
 import pl.org.seva.checkers.domain.usecase.FetchPiecesUseCase
 import pl.org.seva.checkers.domain.repository.PiecesRepository
+import pl.org.seva.checkers.domain.usecase.ResetUseCase
 import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
@@ -38,6 +39,9 @@ class PiecesPresentationModule {
 
     @Provides
     fun provideFetchPiecesUseCase(piecesRepository: PiecesRepository) = FetchPiecesUseCase(piecesRepository)
+
+    @Provides
+    fun provideResetUseCase(piecesRepository: PiecesRepository) = ResetUseCase(piecesRepository)
 
     @Provides
     @Singleton

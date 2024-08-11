@@ -8,7 +8,7 @@ class WhiteMoveUseCase(
     private val piecesRepository: PiecesRepository,
 ) : BackgroundExecutingUseCase<PiecesDomainModel, PiecesDomainModel>() {
 
-    override fun executeInBackground(request: PiecesDomainModel): PiecesDomainModel {
+    override suspend fun executeInBackground(request: PiecesDomainModel): PiecesDomainModel {
         val found = piecesRepository.find(request)
         if (found.isNotEmpty()) {
             piecesRepository.reduce(found)

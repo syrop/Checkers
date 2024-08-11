@@ -8,7 +8,7 @@ import pl.org.seva.checkers.domain.model.PiecesDomainModel
 import pl.org.seva.checkers.domain.repository.PiecesRepository
 
 class PiecesLiveRepository(
-    piecesDatasource: PiecesDatasource,
+    private val piecesDatasource: PiecesDatasource,
     private val piecesDataToDomainMapper: PiecesDataToDomainMapper,
     private val piecesDomainToDataMapper: PiecesDomainToDataMapper,
 ) : PiecesRepository {
@@ -21,23 +21,7 @@ class PiecesLiveRepository(
         private set
 
     init {
-        piecesDatasource.load().forEach {
-            piecesStore[it.id] = it
-        }
-        leaves.addAll(piecesStore.values.map { it.id })
-        piecesStore.forEach {
-            if (it.value.parent.isEmpty()) {
-                root = it.key
-            }
-            else {
-                leaves.remove(it.value.parent)
-                var item = it.value
-                while (item.parent.isNotEmpty()) {
-                    item = requireNotNull(piecesStore[item.parent]) { "Invalid parent" }
-                    it.value.level++
-                }
-            }
-        }
+        reset()
     }
 
     override operator fun get(piecesId: String) =
@@ -87,6 +71,32 @@ class PiecesLiveRepository(
         piecesStore[root] = piecesDomainToDataMapper.toData(state)
         leaves.clear()
         leaves.add(root)
+    }
+
+    override fun addLeaf(state: PiecesDomainModel) {
+        leaves.remove(state.parent)
+        leaves.add(state.id)
+        piecesStore[state.id] = piecesDomainToDataMapper.toData(state)
+    }
+
+    override fun reset() {
+        piecesDatasource.load().forEach {
+            piecesStore[it.id] = it
+        }
+        leaves.addAll(piecesStore.values.map { it.id })
+        piecesStore.forEach {
+            if (it.value.parent.isEmpty()) {
+                root = it.key
+            }
+            else {
+                leaves.remove(it.value.parent)
+                var item = it.value
+                while (item.parent.isNotEmpty()) {
+                    item = requireNotNull(piecesStore[item.parent]) { "Invalid parent" }
+                    it.value.level++
+                }
+            }
+        }
     }
 
 }

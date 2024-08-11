@@ -16,4 +16,8 @@ interface PiecesRepository {
 
     fun updateState(state: PiecesDomainModel)
 
+    fun addLeaf(state: PiecesDomainModel)
+
+    fun reset()
+
 }

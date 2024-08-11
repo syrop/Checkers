@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import pl.org.seva.checkers.domain.usecase.BlackMoveUseCase
 import pl.org.seva.checkers.domain.usecase.FetchPiecesUseCase
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
+import pl.org.seva.checkers.domain.usecase.ResetUseCase
 import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.architecture.BaseViewModel
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
@@ -22,6 +23,7 @@ class GameViewModel @Inject constructor(
     private val whiteMoveUseCase: WhiteMoveUseCase,
     private val blackMoveUseCase: BlackMoveUseCase,
     private val fetchPiecesUseCase: FetchPiecesUseCase,
+    private val resetUseCase: ResetUseCase,
     useCaseExecutorProvider: UseCaseExecutorProvider,
 ) : BaseViewModel<PiecesViewState, Unit>(
     useCaseExecutorProvider,
@@ -75,6 +77,7 @@ class GameViewModel @Inject constructor(
         blackWon = false
         isWhiteMoving = true
         updateViewState(initialState())
+        execute(resetUseCase, ::presentPieces)
         fetchPieces()
     }
 

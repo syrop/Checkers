@@ -14,7 +14,7 @@ abstract class BackgroundExecutingUseCase<REQUEST, RESULT> : UseCase<REQUEST, RE
         onResult(result)
     }
 
-    abstract fun executeInBackground(
+    abstract suspend fun executeInBackground(
         request: REQUEST
     ): RESULT
 }
