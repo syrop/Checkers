@@ -13,6 +13,7 @@ import pl.org.seva.checkers.domain.repository.PiecesRepository
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
 import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,6 +35,7 @@ class PiecesPresentationModule {
     fun provideFetchPiecesUseCase(piecesRepository: PiecesRepository) = FetchPiecesUseCase(piecesRepository)
 
     @Provides
+    @Singleton
     fun providePiecesRepository(
         piecesDatasource: PiecesDatasource,
         piecesDataToDomainMapper: PiecesDataToDomainMapper,
