@@ -2,7 +2,7 @@ package pl.org.seva.checkers.data.repository
 
 import pl.org.seva.checkers.data.datasource.PiecesDatasource
 import pl.org.seva.checkers.data.mapper.PiecesDataToDomainMapper
-import pl.org.seva.checkers.data.model.PiecesResponseDataModel
+import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.repository.PiecesRepository
 
 class PiecesLiveRepository(
@@ -10,9 +10,12 @@ class PiecesLiveRepository(
     private val piecesDataToDomainMapper: PiecesDataToDomainMapper,
 ) : PiecesRepository {
 
-    private val piecesStore = mutableMapOf<String, PiecesResponseDataModel>()
+    private val piecesStore = mutableMapOf<String, PiecesDataModel>()
 
     private val leaves = mutableSetOf<String>()
+
+    override var root = ""
+        private set
 
     init {
         piecesDatasource.load().forEach {
@@ -34,11 +37,8 @@ class PiecesLiveRepository(
         }
     }
 
-    override var root = ""
-        private set
-
     override operator fun get(piecesId: String) =
-        piecesDataToDomainMapper.toDomain(requireNotNull(piecesStore[piecesId]) { "wrong Id" })
+        piecesDataToDomainMapper.toDomain(requireNotNull(piecesStore[piecesId]) { "wrong Id: $piecesId" })
 
     override fun getLeaves(level: Int): Iterable<String> {
         if (level < 0) return leaves

@@ -1,11 +1,11 @@
 package pl.org.seva.checkers.datasource.mapper
 
-import pl.org.seva.checkers.data.model.PiecesResponseDataModel
+import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.datasource.model.PiecesMemoryModel
 
 class PiecesMemoryToDataMapper {
 
-    fun toData(input: PiecesMemoryModel) = PiecesResponseDataModel(
+    fun toData(input: PiecesMemoryModel) = PiecesDataModel(
         input.id,
         input.parent,
         input.whiteMen,

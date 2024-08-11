@@ -1,11 +1,11 @@
 package pl.org.seva.checkers.data.mapper
 
-import pl.org.seva.checkers.data.model.PiecesResponseDataModel
+import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
 
 class PiecesDataToDomainMapper {
 
-    fun toDomain(input: PiecesResponseDataModel) = PiecesDomainModel(
+    fun toDomain(input: PiecesDataModel) = PiecesDomainModel(
         input.id,
         input.parent,
         input.whiteMen,

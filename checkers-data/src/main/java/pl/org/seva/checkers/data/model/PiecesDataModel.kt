@@ -1,6 +1,6 @@
 package pl.org.seva.checkers.data.model
 
-data class PiecesResponseDataModel(
+data class PiecesDataModel(
     val id: String,
     val parent: String,
     val whiteMen: List<Pair<Int, Int>>,

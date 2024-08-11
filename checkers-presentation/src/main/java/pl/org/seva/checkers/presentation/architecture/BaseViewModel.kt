@@ -15,9 +15,7 @@ abstract class BaseViewModel<VIEW_STATE : Any, NOTIFICATION : Any>(
     useCaseExecutorProvider: UseCaseExecutorProvider
 ) : ViewModel() {
 
-    private var _viewState by mutableStateOf(this.initialState())
-
-    val viewState: VIEW_STATE = _viewState
+    var viewState by mutableStateOf(this.initialState())
 
     private val _notification = SingleLiveEvent<NOTIFICATION>()
     val notification = _notification.asLiveData()
@@ -46,7 +44,7 @@ abstract class BaseViewModel<VIEW_STATE : Any, NOTIFICATION : Any>(
     }
 
     protected fun updateViewState(newViewState: VIEW_STATE) {
-        _viewState = newViewState
+        viewState = newViewState
     }
 
     protected fun updateViewState(
