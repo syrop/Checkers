@@ -4,9 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import pl.org.seva.checkers.domain.BlackMoveUseCase
-import pl.org.seva.checkers.domain.FetchPiecesUseCase
+import pl.org.seva.checkers.domain.usecase.BlackMoveUseCase
+import pl.org.seva.checkers.domain.usecase.FetchPiecesUseCase
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
+import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.architecture.BaseViewModel
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class GameViewModel @Inject constructor(
     private val piecesDomainToPresentationMapper: PiecesDomainToPresentationMapper,
     private val piecesPresentationToDomainMapper: PiecesPresentationToDomainMapper,
+    private val whiteMoveUseCase: WhiteMoveUseCase,
     private val blackMoveUseCase: BlackMoveUseCase,
     private val fetchPiecesUseCase: FetchPiecesUseCase,
     useCaseExecutorProvider: UseCaseExecutorProvider,
@@ -43,7 +45,7 @@ class GameViewModel @Inject constructor(
 
     fun blackMove() {
         isWhiteMoving = false
-        execute(blackMoveUseCase, Unit, ::presentPieces)
+        execute(blackMoveUseCase, ::presentPieces)
     }
 
     fun isEmpty(x: Int, y: Int) = viewState.pieces.isEmpty(x to y)
@@ -65,7 +67,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun fetchPieces() {
-        execute(fetchPiecesUseCase, Unit, ::presentPieces)
+        execute(fetchPiecesUseCase, ::presentPieces)
     }
 
     fun reset() {
@@ -103,6 +105,7 @@ class GameViewModel @Inject constructor(
         else {
             viewState.addWhiteMan(x to y)
         })
+        execute(whiteMoveUseCase, piecesPresentationToDomainMapper.toDomain(viewState.pieces))
     }
 
     fun stopMovement() = updateViewState(viewState.stopMovement())

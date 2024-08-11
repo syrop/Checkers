@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.domain
+package pl.org.seva.checkers.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

@@ -40,7 +40,6 @@ fun Pieces(
 
     val whiteColor = colorResource(com.google.android.material.R.color.material_dynamic_primary80)
     val blackColor = colorResource(com.google.android.material.R.color.material_dynamic_primary40)
-
     Canvas(
         modifier = Modifier
             .fillMaxSize()

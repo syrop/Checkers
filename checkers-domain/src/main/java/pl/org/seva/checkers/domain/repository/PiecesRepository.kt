@@ -10,4 +10,10 @@ interface PiecesRepository {
 
     fun getLeaves(level: Int = -1): Iterable<String>
 
+    fun find(sought: PiecesDomainModel): String
+
+    fun reduce(id: String)
+
+    fun updateState(state: PiecesDomainModel)
+
 }

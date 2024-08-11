@@ -103,7 +103,8 @@ class GameFragment : Fragment() {
                     isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
                     vm.stopMovement()
                     vm.addWhite(x, y, isKingInMovement)
-                    if (vm.viewState.pieces.whiteMen.toSet().isEmpty()) {
+                    if (vm.viewState.pieces.blackMen.toSet().isEmpty() &&
+                        vm.viewState.pieces.blackKings.toSet().isEmpty()) {
                         vm.setWhiteWon()
                     }
                     else {

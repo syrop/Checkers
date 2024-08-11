@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.domain
+package pl.org.seva.checkers.domain.usecase
 
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.BackgroundExecutingUseCase
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
