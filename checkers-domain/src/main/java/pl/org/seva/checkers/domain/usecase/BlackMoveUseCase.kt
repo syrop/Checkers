@@ -250,7 +250,6 @@ class BlackMoveUseCase(
 
         if (piecesRepository.getLeaves().toSet().first() == piecesRepository.root) {
             repeat(DEPTH) { level ->
-                println("wiktor level: $level")
                 piecesRepository.getLeaves(level)
                     .map { leaf ->
                         async {

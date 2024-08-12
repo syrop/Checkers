@@ -62,6 +62,7 @@ class PiecesLiveRepository(
         }.map { it.id }
         toDelete.forEach {
             leaves.remove(it)
+            piecesStore.remove(it)
         }
         piecesStore.forEach {
             it.value.level--
