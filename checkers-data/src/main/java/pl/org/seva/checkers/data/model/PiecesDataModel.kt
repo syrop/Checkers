@@ -7,6 +7,8 @@ data class PiecesDataModel(
     val blackMen: List<Pair<Int, Int>>,
     val whiteKings: List<Pair<Int, Int>>,
     val blackKings: List<Pair<Int, Int>>,
+    val heuristics: Int?,
 ) {
     var level = 0
 }
+

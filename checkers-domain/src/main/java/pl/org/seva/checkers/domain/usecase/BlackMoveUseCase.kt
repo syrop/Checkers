@@ -108,7 +108,7 @@ class BlackMoveUseCase(
 
             val result = mutableSetOf<PiecesDomainModel>()
 
-            if (level != DEPTH) {
+            if (level != DEPTH - 1) {
                 if (level % 2 == 0) { // black moves
                     val men = async(Dispatchers.Default) {
                         mutableListOf<PiecesDomainModel>().apply {
@@ -245,11 +245,12 @@ class BlackMoveUseCase(
                     result.addAll(kings.await())
                 }
             }
-            result.map { it.copy(level = level + 1) }
+            result.map { it.copy(level = level + 1, parent = this@getChildren.id) }
         }
 
         if (piecesRepository.getLeaves().toSet().first() == piecesRepository.root) {
             repeat(DEPTH) { level ->
+                println("wiktor level: $level")
                 piecesRepository.getLeaves(level)
                     .map { leaf ->
                         async {
@@ -261,7 +262,7 @@ class BlackMoveUseCase(
             }
         }
         else {
-            piecesRepository.getLeaves(DEPTH)
+            piecesRepository.getLeaves(DEPTH - 1)
                 .map { leaf ->
                     async {
                         piecesRepository[leaf].getChildren().forEach { child ->
@@ -271,7 +272,37 @@ class BlackMoveUseCase(
                 }.awaitAll()
         }
 
-        piecesRepository[piecesRepository.root]
+        piecesRepository.getLeaves().map { piecesRepository[it] }.forEach { leaf ->
+            val heuristics = if (leaf.blackWon()) Int.MIN_VALUE else if (leaf.whiteWon()) Int.MAX_VALUE else
+                leaf.whiteMen.size + leaf.whiteKings.size * KINGS_WEIGHT -
+                    leaf.blackMen.size - leaf.blackKings.size * KINGS_WEIGHT
+            val path = mutableListOf(leaf.copy(heuristics = heuristics))
+            while (path.last().parent.isNotEmpty()) {
+                val parent = piecesRepository[path.last().parent]
+                if (parent.level % 2 == 0) {  // black moves
+                    if (parent.heuristics != null && parent.heuristics < heuristics) {
+                        break
+                    }
+                    else {
+                        path.add(parent.copy(heuristics = heuristics))
+                    }
+                }
+                else {  // white moves
+                    if (parent.heuristics != null && parent.heuristics > heuristics) {
+                        break
+                    }
+                    else {
+                        path.add(parent.copy(heuristics = heuristics))
+                    }
+                }
+            }
+            path.forEach { piecesRepository[it.id] = it }
+        }
+
+        piecesRepository.getImmediateMoves()
+            .minByOrNull { it.heuristics ?: Int.MAX_VALUE }
+            ?.apply { piecesRepository.reduce(id) }
+            ?: piecesRepository[piecesRepository.root]
     }
 
     companion object {

@@ -8,5 +8,5 @@ data class PiecesDomainModel(
     val whiteKings: List<Pair<Int, Int>>,
     val blackKings: List<Pair<Int, Int>>,
     val level: Int = 0,
-    val heuristics: Int = 0,
+    val heuristics: Int? = null,
 )

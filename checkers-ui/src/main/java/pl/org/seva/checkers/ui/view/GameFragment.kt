@@ -107,9 +107,6 @@ class GameFragment : Fragment() {
                         vm.viewState.pieces.blackKings.toSet().isEmpty()) {
                         vm.setWhiteWon()
                     }
-                    else {
-                        vm.blackMove()
-                    }
                 }
                 else {
                     vm.restoreState()

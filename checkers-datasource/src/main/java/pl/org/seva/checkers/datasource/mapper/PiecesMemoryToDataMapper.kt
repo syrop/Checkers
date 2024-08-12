@@ -12,6 +12,7 @@ class PiecesMemoryToDataMapper {
         input.blackMen,
         input.whiteKings,
         input.blackKings,
+        null,
     )
 
 }

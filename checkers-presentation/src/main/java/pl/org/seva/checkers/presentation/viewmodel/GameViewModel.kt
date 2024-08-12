@@ -29,7 +29,10 @@ class GameViewModel @Inject constructor(
     useCaseExecutorProvider,
 ) {
 
+    enum class LastMove { WHITE, BLACK, NONE }
+
     var isWhiteMoving = true
+    private var lastMove = LastMove.NONE
     var whiteWon by mutableStateOf(false)
     var blackWon by mutableStateOf(false)
 
@@ -45,9 +48,11 @@ class GameViewModel @Inject constructor(
 
     override fun initialState() = PiecesViewState()
 
-    fun blackMove() {
+    private fun blackMove() {
         isWhiteMoving = false
-        execute(blackMoveUseCase, ::presentPieces)
+        viewState = viewState.loading()
+        lastMove = LastMove.BLACK
+        execute(blackMoveUseCase, Unit, ::presentPieces)
     }
 
     fun isEmpty(x: Int, y: Int) = viewState.pieces.isEmpty(x to y)
@@ -69,7 +74,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun fetchPieces() {
-        execute(fetchPiecesUseCase, ::presentPieces)
+        execute(fetchPiecesUseCase, Unit, ::presentPieces)
     }
 
     fun reset() {
@@ -77,7 +82,7 @@ class GameViewModel @Inject constructor(
         blackWon = false
         isWhiteMoving = true
         updateViewState(initialState())
-        execute(resetUseCase, ::presentPieces)
+        execute(resetUseCase, Unit, ::presentPieces)
         fetchPieces()
     }
 
@@ -108,14 +113,33 @@ class GameViewModel @Inject constructor(
         else {
             viewState.addWhiteMan(x to y)
         })
-        execute(whiteMoveUseCase, piecesPresentationToDomainMapper.toDomain(viewState.pieces))
+        lastMove = LastMove.WHITE
+        execute(whiteMoveUseCase, piecesPresentationToDomainMapper.toDomain(viewState.pieces), ::presentPieces)
     }
+
+    private fun whiteWon() = viewState.pieces.blackMen.toSet().isEmpty() &&
+            viewState.pieces.blackKings.toSet().isEmpty()
+
+    private fun blackWon() = viewState.pieces.whiteMen.toSet().isEmpty() &&
+            viewState.pieces.whiteKings.toSet().isEmpty()
 
     fun stopMovement() = updateViewState(viewState.stopMovement())
 
     private fun presentPieces(pieces: PiecesDomainModel) {
         isWhiteMoving = true
         updateViewState { withPieces(piecesDomainToPresentationMapper.toPresentation(pieces)) }
+        if (lastMove == LastMove.WHITE) {
+            if (whiteWon()) {
+                whiteWon = true
+            }
+            else {
+                updateViewState(viewState.loading())
+                blackMove()
+            }
+        }
+        else if (lastMove == LastMove.BLACK && blackWon()) {
+            blackWon = true
+        }
     }
 
 }

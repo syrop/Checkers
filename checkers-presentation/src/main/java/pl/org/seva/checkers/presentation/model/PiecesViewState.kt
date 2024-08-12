@@ -32,8 +32,4 @@ data class PiecesViewState(
 
     fun addWhiteKing(pair: Pair<Int, Int>) = withPieces(pieces.copy(whiteKings = pieces.whiteKings + pair))
 
-    fun whiteWon() = copy(whiteWon = true)
-
-    fun blackWon() = copy(blackWon = true)
-
 }

@@ -13,6 +13,7 @@ class PiecesDataToDomainMapper {
         input.whiteKings,
         input.blackKings,
         input.level,
+        input.heuristics,
     )
 
 }

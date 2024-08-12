@@ -8,6 +8,8 @@ interface PiecesRepository {
 
     operator fun get(piecesId: String): PiecesDomainModel
 
+    operator fun set(piecesId: String, value: PiecesDomainModel)
+
     fun getLeaves(level: Int = -1): Iterable<String>
 
     fun find(sought: PiecesDomainModel): String
@@ -19,5 +21,7 @@ interface PiecesRepository {
     fun addLeaf(state: PiecesDomainModel)
 
     fun reset()
+
+    fun getImmediateMoves(): Iterable<PiecesDomainModel>
 
 }

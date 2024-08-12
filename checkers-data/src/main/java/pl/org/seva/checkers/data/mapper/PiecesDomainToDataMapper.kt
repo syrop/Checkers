@@ -12,6 +12,9 @@ class PiecesDomainToDataMapper {
         input.blackMen,
         input.whiteKings,
         input.blackKings,
-    )
+        input.heuristics,
+    ).apply {
+        level = input.level
+    }
 
 }

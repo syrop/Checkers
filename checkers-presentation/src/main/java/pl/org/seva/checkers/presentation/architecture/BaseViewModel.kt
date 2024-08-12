@@ -26,14 +26,6 @@ abstract class BaseViewModel<VIEW_STATE : Any, NOTIFICATION : Any>(
         useCaseExecutorProvider(viewModelScope)
     }
 
-    protected fun <OUTPUT> execute(
-        useCase: UseCase<Unit, OUTPUT>,
-        onSuccess: (OUTPUT) -> Unit = {},
-        onException: (DomainException) -> Unit = {}
-    ) {
-        execute(useCase, Unit, onSuccess, onException)
-    }
-
     protected fun <INPUT, OUTPUT> execute(
         useCase: UseCase<INPUT, OUTPUT>,
         value: INPUT,

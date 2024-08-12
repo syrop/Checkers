@@ -6,6 +6,7 @@ import pl.org.seva.checkers.data.mapper.PiecesDomainToDataMapper
 import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
 import pl.org.seva.checkers.domain.repository.PiecesRepository
+import java.util.Collections
 
 class PiecesLiveRepository(
     private val piecesDatasource: PiecesDatasource,
@@ -13,7 +14,7 @@ class PiecesLiveRepository(
     private val piecesDomainToDataMapper: PiecesDomainToDataMapper,
 ) : PiecesRepository {
 
-    private val piecesStore = mutableMapOf<String, PiecesDataModel>()
+    private val piecesStore = Collections.synchronizedMap(mutableMapOf<String, PiecesDataModel>())
 
     private val leaves = mutableSetOf<String>()
 
@@ -27,9 +28,15 @@ class PiecesLiveRepository(
     override operator fun get(piecesId: String) =
         piecesDataToDomainMapper.toDomain(requireNotNull(piecesStore[piecesId]) { "wrong Id: $piecesId" })
 
+    override operator fun set(piecesId: String, value: PiecesDomainModel) {
+        piecesStore[piecesId] = piecesDomainToDataMapper.toData(value)
+    }
+
     override fun getLeaves(level: Int): Iterable<String> {
         if (level < 0) return leaves
-        return leaves.filter { get(it).level == level }
+        return leaves.filter {
+            get(it).level == level
+        }
     }
 
     override fun find(sought: PiecesDomainModel): String {
@@ -47,15 +54,14 @@ class PiecesLiveRepository(
             var item = it
             while (true) {
                 if (item.id == id) {
-                    return@filter false
+                    return@filter true
                 }
                 item = piecesStore[item.parent] ?: break
             }
-            return@filter true
+            return@filter false
         }.map { it.id }
         toDelete.forEach {
             leaves.remove(it)
-            piecesStore.remove(it)
         }
         piecesStore.forEach {
             it.value.level--
@@ -67,16 +73,16 @@ class PiecesLiveRepository(
 
     override fun updateState(state: PiecesDomainModel) {
         root = state.id
+        leaves.clear()
         piecesStore.clear()
         piecesStore[root] = piecesDomainToDataMapper.toData(state)
-        leaves.clear()
         leaves.add(root)
     }
 
     override fun addLeaf(state: PiecesDomainModel) {
+        piecesStore[state.id] = piecesDomainToDataMapper.toData(state)
         leaves.remove(state.parent)
         leaves.add(state.id)
-        piecesStore[state.id] = piecesDomainToDataMapper.toData(state)
     }
 
     override fun reset() {
@@ -97,6 +103,10 @@ class PiecesLiveRepository(
                 }
             }
         }
+    }
+
+    override fun getImmediateMoves(): Iterable<PiecesDomainModel> {
+        return piecesStore.values.filter { it.level == 1 }.map { piecesDataToDomainMapper.toDomain(it) }
     }
 
 }
