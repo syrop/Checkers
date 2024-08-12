@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Warcaby Wiktora</string>
+
+    <!-- Game fragment. -->
+    <string name="game_label">Warcaby</string>
+    <string name="reset">Reset</string>
+    <string name="white_won">Białe wygrały</string>
+    <string name="black_won">Czarne wygrały</string>
+</resources>

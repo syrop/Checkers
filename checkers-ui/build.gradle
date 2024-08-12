@@ -1,0 +1,61 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.compose'
+}
+
+android {
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+    }
+
+    buildFeatures {
+        viewBinding true
+        compose true
+    }
+
+    namespace 'pl.org.seva.checkers'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+
+    implementation "com.google.dagger:hilt-android:2.48"
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
+    kapt "com.google.dagger:hilt-compiler:2.48"
+    implementation "androidx.fragment:fragment-ktx:1.8.2"
+
+    implementation 'androidx.compose.ui:ui:1.6.8'
+    implementation 'androidx.compose.ui:ui-tooling:1.6.8'
+    implementation 'androidx.compose.foundation:foundation:1.6.8'
+    implementation 'androidx.compose.material:material:1.6.8'
+    implementation 'androidx.compose.material:material-icons-core:1.6.8'
+    implementation 'androidx.compose.material:material-icons-extended:1.6.8'
+    implementation 'androidx.activity:activity-compose:1.9.1'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.6.8'
+    implementation 'androidx.compose.runtime:runtime-rxjava2:1.6.8'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
+
+    implementation project(':checkers-presentation')
+}
