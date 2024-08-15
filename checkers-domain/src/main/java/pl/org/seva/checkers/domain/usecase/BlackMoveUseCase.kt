@@ -29,40 +29,39 @@ class BlackMoveUseCase(
         blackKings = blackKings.filter { it != pair },
     )
 
+    fun PiecesDomainModel.containsBlack(pair: Pair<Int, Int>) =
+        blackMen.contains(pair) || blackKings.contains(pair)
+
+    fun PiecesDomainModel.containsWhite(pair: Pair<Int, Int>) =
+        whiteMen.contains(pair) || whiteKings.contains(pair)
+
+    fun PiecesDomainModel.isEmpty(pair: Pair<Int, Int>) =
+        !this.containsWhite(pair) && !containsBlack(pair)
+
+    fun PiecesDomainModel.addWhiteMan(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        whiteMen = whiteMen + pair,
+    )
+
+    fun PiecesDomainModel.addBlackMan(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        blackMen = blackMen + pair,
+    )
+
+    fun PiecesDomainModel.addWhiteKing(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        whiteKings = whiteKings + pair,
+    )
+
+    fun PiecesDomainModel.addBlackKing(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        blackKings = blackKings + pair,
+    )
+
     override suspend fun executeInBackground(request: Unit) = coroutineScope {
-
-        fun PiecesDomainModel.containsBlack(pair: Pair<Int, Int>) =
-            blackMen.contains(pair) || blackKings.contains(pair)
-
-        fun PiecesDomainModel.containsWhite(pair: Pair<Int, Int>) =
-            whiteMen.contains(pair) || whiteKings.contains(pair)
-
-
-        fun PiecesDomainModel.isEmpty(pair: Pair<Int, Int>) =
-            !this.containsWhite(pair) && !containsBlack(pair)
 
         fun PiecesDomainModel.isValidAndEmpty(pair: Pair<Int, Int>) =
             pair.first in 0..7 && pair.second in 0..7 && isEmpty(pair)
-
-        fun PiecesDomainModel.addWhiteMan(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            whiteMen = whiteMen + pair,
-        )
-
-        fun PiecesDomainModel.addBlackMan(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            blackMen = blackMen + pair,
-        )
-
-        fun PiecesDomainModel.addWhiteKing(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            whiteKings = whiteKings + pair,
-        )
-
-        fun PiecesDomainModel.addBlackKing(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            blackKings = blackKings + pair,
-        )
 
         fun PiecesDomainModel.addBlack(pair: Pair<Int, Int>) = if (pair.second == 7) {
             addBlackKing(pair)

@@ -76,7 +76,7 @@ class FetchPiecesUseCaseTest {
         val actualResult = classUnderTest.executeInBackground(Unit)
 
         // Then
-        assertEquals(expectedPieces, actualResult.copy())
+        assertEquals(expectedPieces, actualResult)
 
     }
 

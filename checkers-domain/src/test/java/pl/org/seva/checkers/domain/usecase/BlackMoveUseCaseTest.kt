@@ -282,4 +282,193 @@ class BlackMoveUseCaseTest {
         assertEquals(expectedResult, actualResult)
     }
 
+    @Test
+    fun `Given white man when containsWhite returns true`() {
+        // Given
+        val givenWhiteMenPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            listOf(0 to 0),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenWhiteMenPosition.containsWhite(0 to 0)
+        }
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given white king when containsWhite returns true`() {
+        // Given
+        val givenWhiteKingsPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            listOf(0 to 0),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenWhiteKingsPosition.containsWhite(0 to 0)
+        }
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given black man when containsBlack returns true`() {
+        // Given
+        val givenBlackMenPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            listOf(0 to 0),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenBlackMenPosition.containsBlack(0 to 0)
+        }
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given black king when containsBlack returns true`() {
+        // Given
+        val givenBlackKingsPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            listOf(0 to 0),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenBlackKingsPosition.containsBlack(0 to 0)
+        }
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given empty position when isEmpty returns true`() {
+        val givenEmptyPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenEmptyPosition.isEmpty(0 to 0)
+        }
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given empty position when addWhiteMan returns one man`() {
+        // Given
+        val givenEmptyPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenEmptyPosition.addWhiteMan(0 to 0)
+        }.whiteMen.size
+
+        // Then
+        assertEquals(1, actualResult)
+    }
+
+    @Test
+    fun `Given empty position when addWhiteKing returns one man`() {
+        // Given
+        val givenEmptyPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenEmptyPosition.addWhiteKing(0 to 0)
+        }.whiteKings.size
+
+        // Then
+        assertEquals(1, actualResult)
+    }
+
+    @Test
+    fun `Given empty position when addBlackMan returns one man`() {
+        // Given
+        val givenEmptyPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenEmptyPosition.addBlackMan(0 to 0)
+        }.blackMen.size
+
+        // Then
+        assertEquals(1, actualResult)
+    }
+
+    @Test
+    fun `Given empty position when addBlackKing returns one man`() {
+        // Given
+        val givenEmptyPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenEmptyPosition.addBlackKing(0 to 0)
+        }.blackKings.size
+
+        // Then
+        assertEquals(1, actualResult)
+    }
+
+
 }
