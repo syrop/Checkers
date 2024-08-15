@@ -17,19 +17,19 @@ class BlackMoveUseCase(
 
     fun PiecesDomainModel.blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
 
+    fun PiecesDomainModel.removeWhite(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        whiteMen = whiteMen.filter { it != pair },
+        whiteKings = whiteKings.filter { it != pair },
+    )
+
+    fun PiecesDomainModel.removeBlack(pair: Pair<Int, Int>) = copy(
+        id = UUID.randomUUID().toString(),
+        blackMen = blackMen.filter { it != pair },
+        blackKings = blackKings.filter { it != pair },
+    )
+
     override suspend fun executeInBackground(request: Unit) = coroutineScope {
-
-        fun PiecesDomainModel.removeWhite(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            whiteMen = whiteMen.filter { it != pair },
-            whiteKings = whiteKings.filter { it != pair },
-        )
-
-        fun PiecesDomainModel.removeBlack(pair: Pair<Int, Int>) = copy(
-            id = UUID.randomUUID().toString(),
-            blackMen = blackMen.filter { it != pair },
-            blackKings = blackKings.filter { it != pair },
-        )
 
         fun PiecesDomainModel.containsBlack(pair: Pair<Int, Int>) =
             blackMen.contains(pair) || blackKings.contains(pair)

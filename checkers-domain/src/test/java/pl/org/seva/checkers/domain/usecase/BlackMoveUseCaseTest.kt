@@ -1,6 +1,5 @@
 package pl.org.seva.checkers.domain.usecase
 
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -9,7 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.given
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
 import pl.org.seva.checkers.domain.repository.PiecesRepository
 import java.util.UUID
@@ -52,7 +50,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only black men when whiteWon then returns false`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenBlackMenPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             emptyList(),
@@ -63,7 +61,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.whiteWon()
+            givenBlackMenPosition.whiteWon()
         }
 
         // Then
@@ -94,7 +92,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only black men when blackWon then returns true`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenBlackMenPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             emptyList(),
@@ -105,7 +103,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.blackWon()
+            givenBlackMenPosition.blackWon()
         }
 
         // Then
@@ -115,7 +113,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only white kings when whiteWon then returns true`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenWhiteKingsPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             emptyList(),
@@ -126,7 +124,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.whiteWon()
+            givenWhiteKingsPosition.whiteWon()
         }
 
         // Then
@@ -136,7 +134,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only black kings when whiteWon then returns false`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenBlakcKingsPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             listOf(0 to 0),
@@ -147,7 +145,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.whiteWon()
+            givenBlakcKingsPosition.whiteWon()
         }
 
         // Then
@@ -157,7 +155,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only white kings when blackWon then returns false`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenWhiteKingsPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             emptyList(),
@@ -168,7 +166,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.blackWon()
+            givenWhiteKingsPosition.blackWon()
         }
 
         // Then
@@ -178,7 +176,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only black kings when blackWon then returns true`() {
         // Given
-        val givenWhiteMenPosition = PiecesDomainModel(
+        val givenBlackKingsPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             emptyList(),
@@ -189,11 +187,99 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenWhiteMenPosition.blackWon()
+            givenBlackKingsPosition.blackWon()
         }
 
         // Then
         assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given white men when removeWhite then returns one man less`() {
+        // Given
+        val givenWhiteMenPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            listOf(0 to 0, 1 to 1),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+        )
+        val expectedResult = givenWhiteMenPosition.whiteMen.size - 1
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenWhiteMenPosition.removeWhite(0 to 0)
+        }.whiteMen.size
+
+        // Then
+        assertEquals(expectedResult, actualResult)
+    }
+
+    @Test
+    fun `Given white kings when removeWhite then returns one king less`() {
+        // Given
+        val givenWhiteKingsPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            listOf(0 to 0, 1 to 1),
+            emptyList(),
+        )
+        val expectedResult = givenWhiteKingsPosition.whiteKings.size - 1
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenWhiteKingsPosition.removeWhite(0 to 0)
+        }.whiteKings.size
+
+        // Then
+        assertEquals(expectedResult, actualResult)
+    }
+
+    @Test
+    fun `Given black men when removeBlack then returns one man less`() {
+        // Given
+        val givenBlackMenPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            listOf(0 to 0, 1 to 1),
+            emptyList(),
+            emptyList(),
+        )
+        val expectedResult = givenBlackMenPosition.blackMen.size - 1
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenBlackMenPosition.removeBlack(0 to 0)
+        }.blackMen.size
+
+        // Then
+        assertEquals(expectedResult, actualResult)
+    }
+
+    @Test
+    fun `Given black kings when removeBlack then returns one king less`() {
+        // Given
+        val givenBlackKingsPosition = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            listOf(0 to 0, 1 to 1),
+        )
+        val expectedResult = givenBlackKingsPosition.blackKings.size - 1
+
+        // When
+        val actualResult = with (classUnderTest) {
+            givenBlackKingsPosition.removeBlack(0 to 0)
+        }.blackKings.size
+
+        // Then
+        assertEquals(expectedResult, actualResult)
     }
 
 }
