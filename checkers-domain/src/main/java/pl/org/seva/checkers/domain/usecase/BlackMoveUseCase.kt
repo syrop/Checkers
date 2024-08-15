@@ -13,11 +13,11 @@ class BlackMoveUseCase(
     private val piecesRepository: PiecesRepository,
 ) : BackgroundExecutingUseCase<Unit, PiecesDomainModel>() {
 
+    fun PiecesDomainModel.whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
+
+    fun PiecesDomainModel.blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
+
     override suspend fun executeInBackground(request: Unit) = coroutineScope {
-
-        fun PiecesDomainModel.whiteWon() = blackMen.isEmpty() && blackKings.isEmpty()
-
-        fun PiecesDomainModel.blackWon() = whiteMen.isEmpty() && whiteKings.isEmpty()
 
         fun PiecesDomainModel.removeWhite(pair: Pair<Int, Int>) = copy(
             id = UUID.randomUUID().toString(),
