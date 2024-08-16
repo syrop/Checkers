@@ -6,3 +6,5 @@
 *.apk
 checkers/release/
 checkers/schemas/
+/checkers-presentation/.attach_pid*
+/checkers-domain/.attach_*

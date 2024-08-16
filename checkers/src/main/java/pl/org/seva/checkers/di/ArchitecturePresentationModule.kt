@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pl.org.seva.checkers.presentation.viewmodel.usecase.UseCaseExecutorProvider
+import pl.org.seva.checkers.presentation.architecture.UseCaseExecutorProvider
 
 @Module
 @InstallIn(SingletonComponent::class)

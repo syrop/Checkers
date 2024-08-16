@@ -15,8 +15,8 @@ import pl.org.seva.checkers.domain.usecase.ResetUseCase
 import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
-import pl.org.seva.checkers.presentation.viewmodel.GamePresentation
-import pl.org.seva.checkers.presentation.viewmodel.usecase.UseCaseExecutorProvider
+import pl.org.seva.checkers.presentation.GamePresentation
+import pl.org.seva.checkers.presentation.architecture.UseCaseExecutorProvider
 import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
 import javax.inject.Singleton
 

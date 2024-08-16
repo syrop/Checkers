@@ -1,10 +1,9 @@
 package pl.org.seva.checkers.ui.view
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import pl.org.seva.checkers.presentation.viewmodel.GamePresentation
+import pl.org.seva.checkers.presentation.GamePresentation
 import javax.inject.Inject
 
 @HiltViewModel

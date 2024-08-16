@@ -1,6 +1,5 @@
-package pl.org.seva.checkers.presentation.viewmodel.usecase
+package pl.org.seva.checkers.presentation.architecture
 
-import kotlinx.coroutines.CoroutineScope
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCaseExecutor
 
 typealias UseCaseExecutorProvider =

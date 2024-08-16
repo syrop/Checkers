@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
-import pl.org.seva.checkers.presentation.viewmodel.usecase.UseCaseExecutorProvider
 
 abstract class BasePresentation<VIEW_STATE : Any, NOTIFICATION : Any>(
     useCaseExecutorProvider: UseCaseExecutorProvider

@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.presentation.viewmodel
+package pl.org.seva.checkers.presentation
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,7 @@ import pl.org.seva.checkers.presentation.architecture.BasePresentation
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
 import pl.org.seva.checkers.presentation.model.PiecesViewState
-import pl.org.seva.checkers.presentation.viewmodel.usecase.UseCaseExecutorProvider
+import pl.org.seva.checkers.presentation.architecture.UseCaseExecutorProvider
 
 class GamePresentation(
     private val piecesDomainToPresentationMapper: PiecesDomainToPresentationMapper,
