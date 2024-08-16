@@ -6,25 +6,18 @@ import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.UnknownDomainException
 import kotlin.coroutines.cancellation.CancellationException
 
-class UseCaseExecutor(private val coroutineScope: CoroutineScope) {
-
-    fun <OUTPUT> execute(
-        useCase: UseCase<Unit, OUTPUT>,
-        onSuccess: (OUTPUT) -> Unit = {},
-        onException: (DomainException) -> Unit = {}
-    ) {
-        execute(useCase, Unit, onSuccess, onException)
-    }
+class UseCaseExecutor {
 
     fun <INPUT, OUTPUT> execute(
         useCase: UseCase<INPUT, OUTPUT>,
+        coroutineScope: CoroutineScope,
         value: INPUT,
-        onSuccess: (OUTPUT) -> Unit = {},
+        onSuccess: (OUTPUT, CoroutineScope) -> Unit = { _, _ ->},
         onException: (DomainException) -> Unit = {}
     ) {
         coroutineScope.launch {
             try {
-                useCase.execute(value, onSuccess)
+                useCase.execute(value, coroutineScope, onSuccess)
             }
             catch (ignore: CancellationException) {
             }

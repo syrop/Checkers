@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
@@ -33,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
-import pl.org.seva.checkers.presentation.viewmodel.GameViewModel
 import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
 import javax.inject.Inject
 
@@ -103,8 +103,8 @@ class GameFragment : Fragment() {
                     isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
                     vm.stopMovement()
                     vm.addWhite(x, y, isKingInMovement)
-                    if (vm.viewState.pieces.blackMen.toSet().isEmpty() &&
-                        vm.viewState.pieces.blackKings.toSet().isEmpty()) {
+                    if (vm.viewState.value.pieces.blackMen.toSet().isEmpty() &&
+                        vm.viewState.value.pieces.blackKings.toSet().isEmpty()) {
                         vm.setWhiteWon()
                     }
                 }
@@ -132,12 +132,12 @@ class GameFragment : Fragment() {
                         vm.sizeY = y
                     }
                     Pieces(
-                        piecesPresentationToUiMapper.toUi(vm.viewState.pieces),
-                        vm.viewState.movingWhiteMan,
-                        vm.viewState.movingWhiteKing,
+                        piecesPresentationToUiMapper.toUi(vm.viewState.collectAsState().value.pieces),
+                        vm.viewState.collectAsState().value.movingWhiteMan,
+                        vm.viewState.collectAsState().value.movingWhiteKing,
                         onTouchListener,
                     )
-                    if (vm.viewState.isLoading) {
+                    if (vm.viewState.collectAsState().value.isLoading) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
@@ -145,7 +145,7 @@ class GameFragment : Fragment() {
                             CircularProgressIndicator()
                         }
                     }
-                    if (vm.whiteWon) {
+                    if (vm.whiteWon.collectAsState().value) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
@@ -156,7 +156,7 @@ class GameFragment : Fragment() {
                             )
                         }
                     }
-                    if (vm.blackWon) {
+                    if (vm.blackWon.collectAsState().value) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()

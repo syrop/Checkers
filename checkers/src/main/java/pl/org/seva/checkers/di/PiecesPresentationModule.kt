@@ -15,6 +15,8 @@ import pl.org.seva.checkers.domain.usecase.ResetUseCase
 import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
+import pl.org.seva.checkers.presentation.viewmodel.GamePresentation
+import pl.org.seva.checkers.presentation.viewmodel.usecase.UseCaseExecutorProvider
 import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
 import javax.inject.Singleton
 
@@ -42,6 +44,25 @@ class PiecesPresentationModule {
 
     @Provides
     fun provideResetUseCase(piecesRepository: PiecesRepository) = ResetUseCase(piecesRepository)
+
+    @Provides
+    fun providesPiecesViewModel(
+        piecesDomainToPresentationMapper: PiecesDomainToPresentationMapper,
+        piecesPresentationToDomainMapper: PiecesPresentationToDomainMapper,
+        whiteMoveUseCase: WhiteMoveUseCase,
+        blackMoveUseCase: BlackMoveUseCase,
+        fetchPiecesUseCase: FetchPiecesUseCase,
+        resetUseCase: ResetUseCase,
+        useCaseExecutorProvider: UseCaseExecutorProvider,
+    ) = GamePresentation(
+        piecesDomainToPresentationMapper,
+        piecesPresentationToDomainMapper,
+        whiteMoveUseCase,
+        blackMoveUseCase,
+        fetchPiecesUseCase,
+        resetUseCase,
+        useCaseExecutorProvider,
+    )
 
     @Provides
     @Singleton

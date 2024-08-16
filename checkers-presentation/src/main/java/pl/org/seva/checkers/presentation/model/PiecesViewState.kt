@@ -1,6 +1,7 @@
 package pl.org.seva.checkers.presentation.model
 
 data class PiecesViewState(
+
     val isLoading: Boolean = true,
     val pieces: PiecesPresentationModel = PiecesPresentationModel(
         emptySet(),

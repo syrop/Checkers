@@ -4,4 +4,4 @@ import kotlinx.coroutines.CoroutineScope
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCaseExecutor
 
 typealias UseCaseExecutorProvider =
-    @JvmSuppressWildcards (coroutineScope: CoroutineScope) -> UseCaseExecutor
+    @JvmSuppressWildcards () -> UseCaseExecutor
