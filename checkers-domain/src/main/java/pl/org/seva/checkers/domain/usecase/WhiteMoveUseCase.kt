@@ -11,7 +11,7 @@ class WhiteMoveUseCase(
     override suspend fun executeInBackground(request: PiecesDomainModel): PiecesDomainModel {
         val found = piecesRepository.find(request)
         if (found.isNotEmpty()) {
-            piecesRepository.reduce(found)
+            piecesRepository.prune(found)
         } else {
             piecesRepository.updateState(request)
         }

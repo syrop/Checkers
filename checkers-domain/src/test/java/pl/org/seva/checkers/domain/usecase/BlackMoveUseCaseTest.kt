@@ -134,7 +134,7 @@ class BlackMoveUseCaseTest {
     @Test
     fun `Given only black kings when whiteWon then returns false`() {
         // Given
-        val givenBlakcKingsPosition = PiecesDomainModel(
+        val givenBlackKingsPosition = PiecesDomainModel(
             UUID.randomUUID().toString(),
             "",
             listOf(0 to 0),
@@ -145,7 +145,7 @@ class BlackMoveUseCaseTest {
 
         // When
         val actualResult = with (classUnderTest) {
-            givenBlakcKingsPosition.whiteWon()
+            givenBlackKingsPosition.whiteWon()
         }
 
         // Then

@@ -299,7 +299,7 @@ class BlackMoveUseCase(
 
         piecesRepository.getImmediateMoves()
             .minByOrNull { it.heuristics ?: Int.MAX_VALUE }
-            ?.apply { piecesRepository.reduce(id) }
+            ?.apply { piecesRepository.prune(id) }
             ?: piecesRepository[piecesRepository.root]
     }
 

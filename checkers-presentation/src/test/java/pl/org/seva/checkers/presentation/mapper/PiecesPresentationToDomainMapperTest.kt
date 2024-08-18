@@ -83,10 +83,6 @@ class PiecesPresentationToDomainMapperTest(
 
     @Test
     fun `When toPresentation`() {
-        // Given
-        given(
-            piecesDomainToPresentationMapper.toDomain(givenInput)
-        ).willReturn(expected)
 
         // When
         val actualValue = classUnderTest.toDomain(givenInput)

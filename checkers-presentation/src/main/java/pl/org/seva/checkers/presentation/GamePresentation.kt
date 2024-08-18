@@ -21,7 +21,7 @@ class GamePresentation(
     private val fetchPiecesUseCase: FetchPiecesUseCase,
     private val resetUseCase: ResetUseCase,
     useCaseExecutorProvider: UseCaseExecutorProvider,
-) : BasePresentation<PiecesViewState, Unit>(
+) : BasePresentation<PiecesViewState>(
     useCaseExecutorProvider,
 ) {
 
@@ -94,7 +94,7 @@ class GamePresentation(
         updateViewState(viewState.value.moveKing(x to y))
     }
 
-    fun addWhite(x: Int, y: Int, forceKing: Boolean = false, coroutineScope: CoroutineScope) {
+    fun addWhite(x: Int, y: Int, forceKing: Boolean, coroutineScope: CoroutineScope) {
         updateViewState(if (forceKing || y == 0) {
             viewState.value.addWhiteKing(x to y)
         }

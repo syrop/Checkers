@@ -14,7 +14,7 @@ interface PiecesRepository {
 
     fun find(sought: PiecesDomainModel): String
 
-    fun reduce(id: String)
+    fun prune(id: String)
 
     fun updateState(state: PiecesDomainModel)
 

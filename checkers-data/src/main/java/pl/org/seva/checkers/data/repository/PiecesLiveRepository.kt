@@ -49,7 +49,7 @@ class PiecesLiveRepository(
         return if (filtered.isEmpty()) "" else filtered.keys.first()
     }
 
-    override fun reduce(id: String) {
+    override fun prune(id: String) {
         val toDelete = piecesStore.values.filter {
             var item = it
             while (true) {

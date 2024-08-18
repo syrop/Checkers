@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
 
-abstract class BasePresentation<VIEW_STATE : Any, NOTIFICATION : Any>(
+abstract class BasePresentation<VIEW_STATE : Any>(
     useCaseExecutorProvider: UseCaseExecutorProvider
 ) {
 
