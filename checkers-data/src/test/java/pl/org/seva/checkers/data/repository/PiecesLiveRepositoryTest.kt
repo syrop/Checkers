@@ -1,6 +1,7 @@
 package pl.org.seva.checkers.data.repository
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,6 +13,7 @@ import pl.org.seva.checkers.data.mapper.PiecesDataToDomainMapper
 import pl.org.seva.checkers.data.mapper.PiecesDomainToDataMapper
 import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class PiecesLiveRepositoryTest {
@@ -71,6 +73,27 @@ class PiecesLiveRepositoryTest {
 
         // Then
         assertEquals(expected, actualValue)
+    }
+
+    @Test
+    fun `Given no matching it when get then throws exception`() {
+        // Given
+        val expectedId = UUID.randomUUID().toString()
+        val expectedException = IllegalArgumentException("wrong Id: $expectedId")
+
+        // When
+        val actualException = try {
+            classUnderTest[expectedId]
+            null
+        } catch (e: IllegalArgumentException) {
+            e
+        }
+
+        // Then
+        @Suppress("KotlinConstantConditions")
+        assertTrue(actualException is IllegalArgumentException)
+        @Suppress("KotlinConstantConditions")
+        assertEquals(expectedException.message, actualException?.message)
     }
 
 }
