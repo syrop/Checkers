@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.data
+package pl.org.seva.checkers.data.mapper
 
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 import org.mockito.junit.MockitoJUnit
-import pl.org.seva.checkers.data.mapper.PiecesDomainToDataMapper
 import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
 

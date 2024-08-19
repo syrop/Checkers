@@ -13,4 +13,5 @@ class PiecesLiveDatasource(
     override fun load(): Iterable<PiecesDataModel> {
         return piecesStore.map { piecesMemoryToDataMapper.toData(it) }
     }
+
 }

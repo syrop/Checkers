@@ -80,7 +80,7 @@ class PiecesDomainToDataMapperTest(
     }
 
     @Test
-    fun `When toPresentation`() {
+    fun `When toData`() {
 
         // When
         val actualValue = classUnderTest.toData(givenInput)
