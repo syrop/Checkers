@@ -34,11 +34,11 @@ class GamePresentation(
 
     private lateinit var storedState: PiecesViewState
 
-    override fun initialState() = PiecesViewState()
+    override val initialViewState = PiecesViewState()
 
     private fun blackMove(coroutineScope: CoroutineScope) {
         isWhiteMoving = false
-        viewState.value = viewState.value.loading()
+        updateViewState(viewState.value.loading())
         lastMove = LastMove.BLACK
         execute(blackMoveUseCase, coroutineScope, Unit, ::presentPieces)
     }
@@ -69,7 +69,7 @@ class GamePresentation(
         whiteWon.value = false
         blackWon.value = false
         isWhiteMoving = true
-        updateViewState(initialState())
+        updateViewState(initialViewState)
         execute(resetUseCase, coroutineScope, Unit, ::presentPieces)
         fetchPieces(coroutineScope)
     }

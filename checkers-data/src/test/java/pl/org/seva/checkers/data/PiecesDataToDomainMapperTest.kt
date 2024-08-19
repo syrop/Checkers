@@ -1,4 +1,4 @@
-package pl.org.seva.checkers.presentation.mapper
+package pl.org.seva.checkers.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -8,15 +8,14 @@ import org.junit.rules.MethodRule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
-import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
-import org.mockito.kotlin.given
+import pl.org.seva.checkers.data.mapper.PiecesDataToDomainMapper
+import pl.org.seva.checkers.data.model.PiecesDataModel
 import pl.org.seva.checkers.domain.model.PiecesDomainModel
-import pl.org.seva.checkers.presentation.model.PiecesPresentationModel
 
 @RunWith(Parameterized::class)
-class PiecesPresentationToDomainMapperTest(
-    private val givenInput: PiecesPresentationModel,
+class PiecesDataToDomainMapperTest(
+    private val givenInput: PiecesDataModel,
     private val expected: PiecesDomainModel,
 ) {
 
@@ -51,11 +50,14 @@ class PiecesPresentationToDomainMapperTest(
             whiteKings: List<Pair<Int, Int>>,
             blackKings: List<Pair<Int, Int>>,
         ) = arrayOf(
-            PiecesPresentationModel(
+            PiecesDataModel(
+                id,
+                parentId,
                 whiteMen,
                 blackMen,
                 blackKings,
                 whiteKings,
+                0,
             ),
             PiecesDomainModel(
                 id,
@@ -64,6 +66,7 @@ class PiecesPresentationToDomainMapperTest(
                 blackMen,
                 whiteKings,
                 blackKings,
+                heuristics = 0,
         ),
         )
     }
@@ -71,11 +74,11 @@ class PiecesPresentationToDomainMapperTest(
     @get:Rule
     val mockitoRule: MethodRule = MockitoJUnit.rule()
 
-    private lateinit var classUnderTest: PiecesPresentationToDomainMapper
+    private lateinit var classUnderTest: PiecesDataToDomainMapper
 
     @Before
     fun setUp() {
-        classUnderTest = PiecesPresentationToDomainMapper()
+        classUnderTest = PiecesDataToDomainMapper()
     }
 
     @Test
@@ -85,7 +88,7 @@ class PiecesPresentationToDomainMapperTest(
         val actualValue = classUnderTest.toDomain(givenInput)
 
         // Then
-        assertEquals(expected, actualValue.copy(id = ID))
+        assertEquals(expected, actualValue)
     }
 
 }
