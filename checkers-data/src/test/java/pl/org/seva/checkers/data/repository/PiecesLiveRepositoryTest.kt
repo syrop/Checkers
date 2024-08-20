@@ -76,7 +76,7 @@ class PiecesLiveRepositoryTest {
     }
 
     @Test
-    fun `Given no matching it when get then throws exception`() {
+    fun `Given no matching id when get then throws exception`() {
         // Given
         val expectedId = UUID.randomUUID().toString()
         val expectedException = IllegalArgumentException("wrong Id: $expectedId")
