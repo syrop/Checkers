@@ -28,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import pl.org.seva.checkers.R
-import kotlin.math.abs
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -55,60 +54,57 @@ class GameFragment : Fragment() {
         setHasOptionsMenu(true)
         return ComposeView(requireContext()).apply {
             setContent {
-                Box {
-                    Board { x, y ->
-                        vm.sizeX = x
-                        vm.sizeY = y
-                    }
-                    Pieces(
-                        piecesPresentationToUiMapper.toUi(vm.viewState.collectAsState().value.pieces),
-                        onStoreState = {
-                            vm.storeState()
-                        },
-                        onValidMove = { x1, y1, beatingX, beatingY, x2, y2, isKing ->
-                            vm.removeWhite(x1 to y1)
-                            vm.removeBlack(beatingX to beatingY)
-                            vm.addWhite(x2, y2, isKing)
-                            if (vm.viewState.value.pieces.blackMen.toSet().isEmpty() &&
-                                vm.viewState.value.pieces.blackKings.toSet().isEmpty()) {
-                                vm.setWhiteWon()
+                    Box {
+                        Board()
+                        Pieces(
+                            piecesPresentationToUiMapper.toUi(vm.viewState.collectAsState().value.pieces),
+                            onStoreState = {
+                                vm.storeState()
+                            },
+                            onValidMove = { x1, y1, beatingX, beatingY, x2, y2, isKing ->
+                                vm.removeWhite(x1 to y1)
+                                vm.removeBlack(beatingX to beatingY)
+                                vm.addWhite(x2, y2, isKing)
+                                if (vm.viewState.value.pieces.blackMen.toSet().isEmpty() &&
+                                    vm.viewState.value.pieces.blackKings.toSet().isEmpty()) {
+                                    vm.setWhiteWon()
+                                }
+                            },
+                            onInvalidMove = {
+                                vm.restoreState()
                             }
-                        },
-                        onInvalidMove = {
-                            vm.restoreState()
+                        )
+                        if (vm.viewState.collectAsState().value.isLoading) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
-                    )
-                    if (vm.viewState.collectAsState().value.isLoading) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            CircularProgressIndicator()
+                        if (vm.whiteWon.collectAsState().value) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text(
+                                    text = getString(R.string.white_won),
+                                    fontSize = 34.sp,
+                                )
+                            }
                         }
-                    }
-                    if (vm.whiteWon.collectAsState().value) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(
-                                text = getString(R.string.white_won),
-                                fontSize = 34.sp,
-                            )
-                        }
-                    }
-                    if (vm.blackWon.collectAsState().value) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(
-                                text = getString(R.string.black_won),
-                                fontSize = 34.sp,
-                            )
+                        if (vm.blackWon.collectAsState().value) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text(
+                                    text = getString(R.string.black_won),
+                                    fontSize = 34.sp,
+                                )
+                            }
                         }
                     }
-                }
             }
         }
     }

@@ -26,14 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 
 @Composable
-fun Board(onSize: (x: Int, y: Int) -> Unit) {
+fun Board() {
 
     Canvas(
         modifier = Modifier
             .fillMaxSize()
-            .onGloballyPositioned { layoutCoordinates ->
-                onSize(layoutCoordinates.size.width, layoutCoordinates.size.height)
-            }
     ) {
         val dx = size.width / 8f
         val dy = size.height / 8f
