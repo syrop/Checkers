@@ -45,78 +45,7 @@ class GameFragment : Fragment() {
 
     private val vm by viewModels<GameViewModel>()
 
-    private var isInMovement = false
     private var isKingInMovement = false
-    private var pickedFrom = -1 to -1
-
-    private val onTouchListener = { event: MotionEvent ->
-
-        fun predecessor(x1: Int, y1: Int, x2: Int, y2: Int): Pair<Int, Int> {
-            if (abs(x2 - x1) != abs(y2 - y1) ||
-                abs(x2 - x1) < 2 || abs(y2 - y1) < 2) return -1 to -1
-            val dirx = if (x2 - x1 > 0) 1 else -1
-            val diry = if (y2 - y1 > 0) 1 else -1
-            return x2 - dirx to y2 - diry
-        }
-
-        fun validateKingMove(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-            val dirx = if (x2 - x1 > 0) 1 else -1
-            val diry = if (y2 - y1 > 0) 1 else -1
-            var x = x1 + dirx
-            var y = y1 + diry
-            if (x == x2 && y == y2) return true // movement by 1
-            while (x != x2 - dirx && y != y2 - diry) {
-                if (!vm.isEmpty(x, y)) return false
-                x += dirx
-                y += diry
-            }
-            return vm.isEmpty(x, y) || vm.removeBlack(x to y)
-        }
-
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> if (vm.isWhiteMoving) {
-                val x = vm.getX(event.rawX)
-                val y = vm.getY(event.rawY)
-                vm.storeState()
-                pickedFrom = x to y
-                isKingInMovement = vm.containsWhiteKing(x, y)
-                isInMovement = vm.removeWhite(x, y)
-            }
-            MotionEvent.ACTION_MOVE -> if (isInMovement) {
-                if (isKingInMovement) {
-                    vm.moveWhiteKingTo(event.rawX.toInt(), event.rawY.toInt())
-                }
-                else {
-                    vm.moveWhiteManTo(event.rawX.toInt(), event.rawY.toInt())
-                }
-            }
-            MotionEvent.ACTION_UP -> if (isInMovement) {
-                val x = vm.getX(event.rawX)
-                val y = vm.getY(event.rawY)
-                if (pickedFrom != x to y && x in 0..7 && y in 0..7 && vm.isEmpty(x, y) &&
-                    abs(x - pickedFrom.first) == 1 &&
-                    y == pickedFrom.second - 1 ||
-                    (abs(x - pickedFrom.first) == 2 &&
-                            y == pickedFrom.second - 2) &&
-                    vm.removeBlack(predecessor(pickedFrom.first, pickedFrom.second, x, y)) ||
-                    abs(x - pickedFrom.first) == abs(y - pickedFrom.second) &&
-                    isKingInMovement && validateKingMove(pickedFrom.first, pickedFrom.second, x, y)) {
-                    vm.stopMovement()
-                    vm.addWhite(x, y, isKingInMovement)
-                    if (vm.viewState.value.pieces.blackMen.toSet().isEmpty() &&
-                        vm.viewState.value.pieces.blackKings.toSet().isEmpty()) {
-                        vm.setWhiteWon()
-                    }
-                }
-                else {
-                    vm.restoreState()
-                }
-                isKingInMovement = false
-                isInMovement = false
-            }
-        }
-        true
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -133,9 +62,21 @@ class GameFragment : Fragment() {
                     }
                     Pieces(
                         piecesPresentationToUiMapper.toUi(vm.viewState.collectAsState().value.pieces),
-                        vm.viewState.collectAsState().value.movingWhiteMan,
-                        vm.viewState.collectAsState().value.movingWhiteKing,
-                        onTouchListener,
+                        onStoreState = {
+                            vm.storeState()
+                        },
+                        onValidMove = { x1, y1, beatingX, beatingY, x2, y2, isKing ->
+                            vm.removeWhite(x1 to y1)
+                            vm.removeBlack(beatingX to beatingY)
+                            vm.addWhite(x2, y2, isKing)
+                            if (vm.viewState.value.pieces.blackMen.toSet().isEmpty() &&
+                                vm.viewState.value.pieces.blackKings.toSet().isEmpty()) {
+                                vm.setWhiteWon()
+                            }
+                        },
+                        onInvalidMove = {
+                            vm.restoreState()
+                        }
                     )
                     if (vm.viewState.collectAsState().value.isLoading) {
                         Box(

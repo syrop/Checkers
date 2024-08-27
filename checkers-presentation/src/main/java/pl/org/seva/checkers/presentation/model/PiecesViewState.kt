@@ -17,6 +17,10 @@ data class PiecesViewState(
 
     fun containsWhiteKing(pair: Pair<Int, Int>) = pieces.whiteKings.contains(pair)
 
+    fun containsWhite(pair: Pair<Int, Int>) = pieces.whiteMen.contains(pair) || containsWhiteKing(pair)
+
+    fun containsBlack(pair: Pair<Int, Int>) = pieces.blackMen.contains(pair) || pieces.blackKings.contains(pair)
+
     fun loading() = copy(isLoading = true)
 
     fun withPieces(

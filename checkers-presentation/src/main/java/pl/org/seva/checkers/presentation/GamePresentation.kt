@@ -27,7 +27,6 @@ class GamePresentation(
 
     enum class LastMove { WHITE, BLACK, NONE }
 
-    var isWhiteMoving = true
     private var lastMove = LastMove.NONE
     var whiteWon = MutableStateFlow(false)
     var blackWon = MutableStateFlow(false)
@@ -37,15 +36,10 @@ class GamePresentation(
     override val initialViewState = PiecesViewState()
 
     private fun blackMove(coroutineScope: CoroutineScope) {
-        isWhiteMoving = false
         updateViewState(viewState.value.loading())
         lastMove = LastMove.BLACK
         execute(blackMoveUseCase, coroutineScope, Unit, ::presentPieces)
     }
-
-    fun isEmpty(x: Int, y: Int) = viewState.value.pieces.isEmpty(x to y)
-
-    fun containsWhiteKing(x: Int, y: Int) = viewState.value.containsWhiteKing(x to y)
 
     fun removeWhite(x: Int, y: Int): Boolean {
         val removed = viewState.value.pieces.removeWhite(x to y)
@@ -68,7 +62,6 @@ class GamePresentation(
     fun reset(coroutineScope: CoroutineScope) {
         whiteWon.value = false
         blackWon.value = false
-        isWhiteMoving = true
         updateViewState(initialViewState)
         execute(resetUseCase, coroutineScope, Unit, ::presentPieces)
         fetchPieces(coroutineScope)
@@ -84,14 +77,6 @@ class GamePresentation(
 
     fun setWhiteWon() {
         whiteWon.value = true
-    }
-
-    fun moveWhiteManTo(x: Int, y: Int) {
-        updateViewState(viewState.value.moveMan(x to y))
-    }
-
-    fun moveWhiteKingTo(x: Int, y: Int) {
-        updateViewState(viewState.value.moveKing(x to y))
     }
 
     fun addWhite(x: Int, y: Int, forceKing: Boolean, coroutineScope: CoroutineScope) {
@@ -111,10 +96,7 @@ class GamePresentation(
     private fun blackWon() = viewState.value.pieces.whiteMen.toSet().isEmpty() &&
             viewState.value.pieces.whiteKings.toSet().isEmpty()
 
-    fun stopMovement() = updateViewState(viewState.value.stopMovement())
-
     private fun presentPieces(pieces: PiecesDomainModel, coroutineScope: CoroutineScope) {
-        isWhiteMoving = true
         updateViewState { withPieces(piecesDomainToPresentationMapper.toPresentation(pieces)) }
         if (lastMove == LastMove.WHITE) {
             if (whiteWon()) {

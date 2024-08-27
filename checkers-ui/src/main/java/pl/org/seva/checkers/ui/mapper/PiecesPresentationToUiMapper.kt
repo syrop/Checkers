@@ -9,6 +9,7 @@ class PiecesPresentationToUiMapper {
         input.whiteMen,
         input.blackMen,
         input.whiteKings,
-        input.blackKings)
+        input.blackKings,
+    )
 
 }
