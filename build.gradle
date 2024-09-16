@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        agp_version = '8.6.0'
+    }
     repositories {
         google()
         mavenCentral()
@@ -7,9 +10,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath "com.android.tools.build:gradle:$agp_version"
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.20-RC'
-        classpath 'org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.0.20-RC'
+        classpath 'org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.0.20'
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.52'
     }
 }

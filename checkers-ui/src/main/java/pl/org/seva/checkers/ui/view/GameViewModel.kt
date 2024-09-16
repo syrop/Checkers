@@ -20,9 +20,6 @@ class GameViewModel @Inject constructor(
     val blackWon
         get() = presentation.blackWon
 
-    var sizeX = 0
-    var sizeY = 0
-
     fun removeBlack(pair: Pair<Int, Int>) = presentation.removeBlack(pair)
 
     fun removeWhite(pair: Pair<Int, Int>) = presentation.removeWhite(pair.first, pair.second)
