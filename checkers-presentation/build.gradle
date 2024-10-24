@@ -14,13 +14,13 @@ kotlin {
 }
 
 dependencies {
-    kapt "com.google.dagger:hilt-compiler:2.52"
+    kapt "com.google.dagger:hilt-compiler:2.57.1"
 
     implementation project(':checkers-domain')
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:6.0.0"
     testImplementation "org.mockito:mockito-inline:5.2.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
 }
