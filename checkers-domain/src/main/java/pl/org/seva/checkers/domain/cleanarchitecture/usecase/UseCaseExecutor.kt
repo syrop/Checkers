@@ -12,7 +12,7 @@ class UseCaseExecutor {
         useCase: UseCase<INPUT, OUTPUT>,
         coroutineScope: CoroutineScope,
         value: INPUT,
-        onSuccess: (OUTPUT, CoroutineScope) -> Unit = { _, _ ->},
+        onSuccess: (OUTPUT) -> Unit = {},
         onException: (DomainException) -> Unit = {}
     ) {
         coroutineScope.launch {

@@ -8,10 +8,10 @@ abstract class BackgroundExecutingUseCase<REQUEST, RESULT> : UseCase<REQUEST, RE
     final override suspend fun execute(
         input: REQUEST,
         coroutineScope: CoroutineScope,
-        onResult: (RESULT, CoroutineScope) -> Unit
+        onResult: (RESULT) -> Unit
     ) {
         val result = executeInBackground(input)
-        onResult(result, coroutineScope)
+        onResult(result)
     }
 
     abstract suspend fun executeInBackground(

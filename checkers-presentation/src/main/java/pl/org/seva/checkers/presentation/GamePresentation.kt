@@ -38,7 +38,7 @@ class GamePresentation(
     private fun blackMove(coroutineScope: CoroutineScope) {
         updateViewState(viewState.value.loading())
         lastMove = LastMove.BLACK
-        execute(blackMoveUseCase, coroutineScope, Unit, ::presentPieces)
+        execute(blackMoveUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
     }
 
     fun removeWhite(x: Int, y: Int): Boolean {
@@ -56,14 +56,14 @@ class GamePresentation(
     }
 
     fun fetchPieces(coroutineScope: CoroutineScope) {
-        execute(fetchPiecesUseCase, coroutineScope, Unit, ::presentPieces)
+        execute(fetchPiecesUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
     }
 
     fun reset(coroutineScope: CoroutineScope) {
         whiteWon.value = false
         blackWon.value = false
         updateViewState(initialViewState)
-        execute(resetUseCase, coroutineScope, Unit, ::presentPieces)
+        execute(resetUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
         fetchPieces(coroutineScope)
     }
 
@@ -87,7 +87,7 @@ class GamePresentation(
             viewState.value.addWhiteMan(x to y)
         })
         lastMove = LastMove.WHITE
-        execute(whiteMoveUseCase, coroutineScope, piecesPresentationToDomainMapper.toDomain(viewState.value.pieces), ::presentPieces)
+        execute(whiteMoveUseCase, coroutineScope, piecesPresentationToDomainMapper.toDomain(viewState.value.pieces), { presentPieces(it, coroutineScope) })
     }
 
     private fun whiteWon() = viewState.value.pieces.blackMen.toSet().isEmpty() &&

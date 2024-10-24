@@ -5,10 +5,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
 
-abstract class BasePresentation<VIEW_STATE : Any>(
+abstract class BasePresentation<VIEW_STATE>(
     useCaseExecutorProvider: UseCaseExecutorProvider
 ) {
 
@@ -25,7 +26,7 @@ abstract class BasePresentation<VIEW_STATE : Any>(
         useCase: UseCase<INPUT, OUTPUT>,
         coroutineScope: CoroutineScope,
         value: INPUT,
-        onSuccess: (OUTPUT, CoroutineScope) -> Unit = { _, _ -> },
+        onSuccess: (OUTPUT) -> Unit = {},
         onException: (DomainException) -> Unit = {}
     ) {
         useCaseExecutor.execute(useCase, coroutineScope, value, onSuccess, onException)
