@@ -3,6 +3,7 @@ package pl.org.seva.checkers.presentation.architecture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.usecase.UseCase
 
