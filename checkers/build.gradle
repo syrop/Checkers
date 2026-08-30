@@ -1,22 +1,18 @@
 plugins {
+    id 'com.android.application'
     id 'com.google.devtools.ksp'
     id 'com.google.dagger.hilt.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'org.jetbrains.kotlin.plugin.compose'
-apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     namespace 'pl.org.seva.checkers'
-    compileSdk=36
+    compileSdk=37
 
     defaultConfig {
         applicationId 'pl.org.seva.checkers'
         minSdkVersion 26
-        targetSdkVersion 36
+        targetSdkVersion 37
         versionCode 6
         versionName '2.0.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -58,32 +54,32 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
 
     // Jetpack, AndroidX
-    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.core:core-ktx:1.19.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.3'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.3'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.4'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.9.4'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.11.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.10.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation 'com.google.android.material:material:1.14.0'
 
     // Jetpack Compose
-    implementation 'androidx.activity:activity-compose:1.11.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3'
+    implementation 'androidx.activity:activity-compose:1.13.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0'
     implementation 'androidx.compose.runtime:runtime-livedata'
 
     // GSON
-    implementation 'com.google.code.gson:gson:2.13.2'
-    implementation 'androidx.compose.ui:ui-android:1.9.1'
-    implementation 'androidx.compose.foundation:foundation-android:1.9.1'
-    implementation 'androidx.compose.material3:material3-android:1.3.2'
+    implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'androidx.compose.ui:ui-android:1.12.0'
+    implementation 'androidx.compose.foundation:foundation-android:1.12.0'
+    implementation 'androidx.compose.material3:material3-android:1.4.0'
 
-    implementation 'com.google.dagger:hilt-android:2.57.1'
-    ksp 'com.google.dagger:hilt-compiler:2.57.1'
+    implementation 'com.google.dagger:hilt-android:2.60.1'
+    ksp 'com.google.dagger:hilt-compiler:2.60.1'
 
     // Testing
     androidTestImplementation 'androidx.test:core:1.7.0'
@@ -93,8 +89,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.7.0'
     androidTestImplementation 'androidx.test:rules:1.7.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0'
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
 

@@ -36,13 +36,11 @@ fun Board() {
         val dy = size.height / 8f
         repeat(8) { x ->
             repeat(8) { y ->
-                if (x % 2 != y % 2) {
-                    drawRect(
-                        color = Color.Black,
-                        topLeft = Offset(x * dx, y * dy),
-                        size = size / 8f
-                    )
-                }
+                drawRect(
+                    color = if (x % 2 != y % 2) Color.Black else Color.White,
+                    topLeft = Offset(x * dx, y * dy),
+                    size = size / 8f
+                )
             }
         }
     }

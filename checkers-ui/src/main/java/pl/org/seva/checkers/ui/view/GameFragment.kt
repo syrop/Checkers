@@ -27,7 +27,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import pl.org.seva.checkers.R
+import pl.org.seva.checkers.ui.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
