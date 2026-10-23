@@ -6,10 +6,10 @@ import pl.org.seva.checkers.ui.model.PiecesUiModel
 class PiecesPresentationToUiMapper {
 
     fun toUi(input: PiecesPresentationModel) = PiecesUiModel(
-        input.whiteMen,
-        input.blackMen,
-        input.whiteKings,
-        input.blackKings,
+        input.whiteMen.toList(),
+        input.blackMen.toList(),
+        input.whiteKings.toList(),
+        input.blackKings.toList(),
     )
 
 }

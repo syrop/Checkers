@@ -26,16 +26,14 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.util.fastForEach
 import pl.org.seva.checkers.ui.model.PiecesUiModel
 import kotlin.math.min
 
@@ -48,36 +46,41 @@ fun Pieces(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    var size by remember { mutableStateOf(Size.Zero) }
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
     val whiteColor = colorResource(com.google.android.material.R.color.material_dynamic_primary80)
     val blackColor = colorResource(com.google.android.material.R.color.material_dynamic_primary40)
     var dragX by remember { mutableIntStateOf(0) }
     var dragY by remember { mutableIntStateOf(0) }
-    var movingWhiteMan by remember { mutableStateOf(-1 to -1) }
-    var movingWhiteKing by remember { mutableStateOf(-1 to -1) }
 
     var isKingInMovement by remember { mutableStateOf(false) }
     var pickedFrom by remember { mutableStateOf(-1 to -1) }
 
+    val currentOnStoreState by rememberUpdatedState(onStoreState)
+    val currentOnValidMove by rememberUpdatedState(onValidMove)
+    val currentOnInvalidMove by rememberUpdatedState(onInvalidMove)
+
     Canvas(
         modifier = modifier
             .fillMaxSize()
-            .onSizeChanged { size = it.toSize() }
+            .drawBoard()
             .pointerInput(piecesModel, enabled) {
                 if (!enabled) return@pointerInput
                 detectDragGestures(
                     onDragStart = { offset ->
+                        val width = size.width.toFloat()
+                        val height = size.height.toFloat()
+                        if (width <= 0f || height <= 0f) return@detectDragGestures
                         offsetX = offset.x
                         offsetY = offset.y
-                        dragX = (offset.x * 8 / size.width).toInt()
-                        dragY = (offset.y * 8 / size.height).toInt()
-                        if (piecesModel.containsWhite(dragX to dragY)) {
-                            pickedFrom = dragX to dragY
+                        dragX = (offset.x * 8f / width).toInt().coerceIn(0, 7)
+                        dragY = (offset.y * 8f / height).toInt().coerceIn(0, 7)
+                        val startCell = dragX to dragY
+                        if (piecesModel.containsWhite(startCell)) {
+                            pickedFrom = startCell
                         }
-                        isKingInMovement = piecesModel.whiteKings.contains(dragX to dragY)
-                        onStoreState()
+                        isKingInMovement = piecesModel.whiteKings.contains(startCell)
+                        currentOnStoreState()
                     },
                     onDragEnd = {
                         if (piecesModel.isValidWhiteMove(pickedFrom, dragX to dragY, isKingInMovement)) {
@@ -87,7 +90,7 @@ fun Pieces(
                                 dragX,
                                 dragY,
                             )
-                            onValidMove(
+                            currentOnValidMove(
                                 pickedFrom.first,
                                 pickedFrom.second,
                                 beating.first,
@@ -97,92 +100,79 @@ fun Pieces(
                                 isKingInMovement,
                             )
                         } else {
-                            onInvalidMove()
+                            currentOnInvalidMove()
                         }
-                        movingWhiteMan = -1 to -1
-                        movingWhiteKing = -1 to -1
                         pickedFrom = -1 to -1
                     },
                     onDragCancel = {
-                        onInvalidMove()
-                        movingWhiteMan = -1 to -1
-                        movingWhiteKing = -1 to -1
+                        currentOnInvalidMove()
                         pickedFrom = -1 to -1
                     },
                 ) { _, dragAmount ->
-                    val original = Offset(offsetX, offsetY)
-                    val summed = original + dragAmount
-                    val newValue = Offset(
-                        x = summed.x.coerceIn(0f, size.width),
-                        y = summed.y.coerceIn(0f, size.height),
-                    )
-                    offsetX = newValue.x
-                    offsetY = newValue.y
-                    if (pickedFrom != -1 to -1) {
-                        if (isKingInMovement) {
-                            movingWhiteKing = offsetX.toInt() to offsetY.toInt()
-                        } else {
-                            movingWhiteMan = offsetX.toInt() to offsetY.toInt()
-                        }
-                    }
-                    dragX = (offsetX * 8 / size.width).toInt()
-                    dragY = (offsetY * 8 / size.height).toInt()
+                    val width = size.width.toFloat()
+                    val height = size.height.toFloat()
+                    if (width <= 0f || height <= 0f) return@detectDragGestures
+                    offsetX = (offsetX + dragAmount.x).coerceIn(0f, width)
+                    offsetY = (offsetY + dragAmount.y).coerceIn(0f, height)
+                    dragX = (offsetX * 8f / width).toInt().coerceIn(0, 7)
+                    dragY = (offsetY * 8f / height).toInt().coerceIn(0, 7)
                 }
             }
     ) {
         val dx = size.width / 8f
         val dy = size.height / 8f
+        val currentPickedFrom = pickedFrom
+        val currentOffsetX = offsetX
+        val currentOffsetY = offsetY
 
-        val radius = min(dx, dy) / 2 * 0.85f
-        piecesModel.whiteMen.filter { it != pickedFrom }.forEach { man ->
-            translate(
-                -size.width / 2 + man.first * dx + dx / 2,
-                -size.height / 2 + man.second * dy + dy / 2,
-            ) {
-                drawCircle(whiteColor, radius)
+        val radius = min(dx, dy) / 2f * 0.85f
+        piecesModel.whiteMen.fastForEach { man ->
+            if (man != currentPickedFrom) {
+                translate(
+                    -size.width / 2f + man.first * dx + dx / 2f,
+                    -size.height / 2f + man.second * dy + dy / 2f,
+                ) {
+                    drawCircle(whiteColor, radius)
+                }
             }
         }
-        piecesModel.blackMen.forEach { man ->
+        piecesModel.blackMen.fastForEach { man ->
             translate(
-                -size.width / 2 + man.first * dx + dx / 2,
-                -size.height / 2 + man.second * dy + dy / 2,
+                -size.width / 2f + man.first * dx + dx / 2f,
+                -size.height / 2f + man.second * dy + dy / 2f,
             ) {
                 drawCircle(blackColor, radius)
             }
         }
-        piecesModel.whiteKings.filter { it != pickedFrom }.forEach { king ->
-            translate(
-                -size.width / 2 + king.first * dx + dx / 2,
-                -size.height / 2 + king.second * dy + dy / 2,
-            ) {
-                drawCircle(whiteColor, radius)
-                drawCircle(Color.White, radius / 2)
+        piecesModel.whiteKings.fastForEach { king ->
+            if (king != currentPickedFrom) {
+                translate(
+                    -size.width / 2f + king.first * dx + dx / 2f,
+                    -size.height / 2f + king.second * dy + dy / 2f,
+                ) {
+                    drawCircle(whiteColor, radius)
+                    drawCircle(Color.White, radius / 2f)
+                }
             }
         }
-        piecesModel.blackKings.forEach { king ->
+        piecesModel.blackKings.fastForEach { king ->
             translate(
-                -size.width / 2 + king.first * dx + dx / 2,
-                -size.height / 2 + king.second * dy + dy / 2,
+                -size.width / 2f + king.first * dx + dx / 2f,
+                -size.height / 2f + king.second * dy + dy / 2f,
             ) {
                 drawCircle(blackColor, radius)
-                drawCircle(Color.White, radius / 2)
+                drawCircle(Color.White, radius / 2f)
             }
         }
-        if (movingWhiteMan != -1 to -1) {
+        if (currentPickedFrom != -1 to -1) {
             translate(
-                movingWhiteMan.first.toFloat() - size.width / 2,
-                movingWhiteMan.second.toFloat() - size.height / 2,
+                currentOffsetX - size.width / 2f,
+                currentOffsetY - size.height / 2f,
             ) {
                 drawCircle(whiteColor, radius)
-            }
-        }
-        if (movingWhiteKing != -1 to -1) {
-            translate(
-                movingWhiteKing.first.toFloat() - size.width / 2,
-                movingWhiteKing.second.toFloat() - size.height / 2,
-            ) {
-                drawCircle(whiteColor, radius)
-                drawCircle(Color.White, radius / 2)
+                if (isKingInMovement) {
+                    drawCircle(Color.White, radius / 2f)
+                }
             }
         }
     }

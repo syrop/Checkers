@@ -17,29 +17,22 @@
 
 package pl.org.seva.checkers.ui.view
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 
-@Composable
-fun Board(modifier: Modifier = Modifier) {
-    Canvas(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        val dx = size.width / 8f
-        val dy = size.height / 8f
-        repeat(8) { x ->
-            repeat(8) { y ->
-                drawRect(
-                    color = if (x % 2 != y % 2) Color.Black else Color.White,
-                    topLeft = Offset(x * dx, y * dy),
-                    size = size / 8f,
-                )
-            }
+fun Modifier.drawBoard(): Modifier = drawBehind {
+    val dx = size.width / 8f
+    val dy = size.height / 8f
+    val cellSize = size / 8f
+    repeat(8) { x ->
+        repeat(8) { y ->
+            drawRect(
+                color = if (x % 2 != y % 2) Color.Black else Color.White,
+                topLeft = Offset(x * dx, y * dy),
+                size = cellSize,
+            )
         }
     }
 }

@@ -3,10 +3,10 @@ package pl.org.seva.checkers.ui.model
 import kotlin.math.abs
 
 data class PiecesUiModel(
-    val whiteMen: Iterable<Pair<Int, Int>>,
-    val blackMen: Iterable<Pair<Int, Int>>,
-    val whiteKings: Iterable<Pair<Int, Int>>,
-    val blackKings: Iterable<Pair<Int, Int>>,
+    val whiteMen: List<Pair<Int, Int>>,
+    val blackMen: List<Pair<Int, Int>>,
+    val whiteKings: List<Pair<Int, Int>>,
+    val blackKings: List<Pair<Int, Int>>,
 ) {
 
     fun containsWhite(pair: Pair<Int, Int>) = whiteMen.contains(pair) || whiteKings.contains(pair)

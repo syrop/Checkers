@@ -40,6 +40,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import pl.org.seva.checkers.ui.mapper.PiecesPresentationToUiMapper
-import pl.org.seva.checkers.ui.view.Board
 import pl.org.seva.checkers.ui.view.GameViewModel
 import pl.org.seva.checkers.ui.view.Pieces
 import javax.inject.Inject
@@ -101,6 +101,9 @@ fun GameScreen(
     piecesPresentationToUiMapper: PiecesPresentationToUiMapper,
 ) {
     val state by vm.viewState.collectAsStateWithLifecycle()
+    val piecesUiModel = remember(state.pieces, piecesPresentationToUiMapper) {
+        piecesPresentationToUiMapper.toUi(state.pieces)
+    }
 
     Scaffold(
         topBar = {
@@ -120,9 +123,8 @@ fun GameScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            Board()
             Pieces(
-                piecesModel = piecesPresentationToUiMapper.toUi(state.pieces),
+                piecesModel = piecesUiModel,
                 onStoreState = { vm.storeState() },
                 onValidMove = { x1, y1, beatingX, beatingY, x2, y2, isKing ->
                     vm.removeWhite(x1 to y1)
