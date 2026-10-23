@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -125,6 +127,60 @@ class GamePresentationTest {
             any(),
             any(),
         )
+    }
+
+    @Test
+    fun `Given no remaining black pieces when addWhite completes then sets whiteWon true without executing blackMoveUseCase`() = runTest {
+        // Given
+        given(useCaseExecutor.execute(eq(whiteMoveUseCase), any(), any(), any(), any())).willCallRealMethod()
+        given(whiteMoveUseCase.execute(any(), any(), any())).willCallRealMethod()
+        given(whiteMoveUseCase.executeInBackground(any())).willReturn(
+            PiecesDomainModel("id", "", listOf(1 to 0), emptyList(), emptyList(), emptyList())
+        )
+        given(piecesPresentationToDomainMapper.toDomain(any())).willReturn(
+            PiecesDomainModel("id", "", listOf(1 to 0), emptyList(), emptyList(), emptyList())
+        )
+        given(piecesDomainToPresentationMapper.toPresentation(any())).willReturn(
+            PiecesPresentationModel(
+                whiteMen = emptyList(),
+                blackMen = emptyList(),
+                whiteKings = listOf(1 to 0),
+                blackKings = emptyList(),
+            )
+        )
+
+        // When
+        withContext(Dispatchers.IO) {
+            classUnderTest.addWhite(1, 0, false, this)
+        }
+
+        // Then
+        assertTrue(classUnderTest.viewState.value.whiteWon)
+        assertEquals(listOf(1 to 0), classUnderTest.viewState.value.pieces.whiteKings.toList())
+        verify(useCaseExecutor, never()).execute(
+            eq(blackMoveUseCase),
+            any(),
+            any(),
+            any(),
+            any(),
+        )
+    }
+
+    @Test
+    fun `Given pieces when storeState and removeWhite and restoreState then restores original state`() = runTest {
+        // Given
+        classUnderTest.addWhite(2, 5, false, this)
+        classUnderTest.storeState()
+
+        // When
+        val removed = classUnderTest.removeWhite(2, 5)
+        assertTrue(removed)
+        assertTrue(classUnderTest.viewState.value.pieces.whiteMen.none())
+        classUnderTest.restoreState()
+
+        // Then
+        assertEquals(setOf(2 to 5), classUnderTest.viewState.value.pieces.whiteMen.toSet())
+        assertFalse(classUnderTest.removeBlack(7 to 7))
     }
 
     @Test

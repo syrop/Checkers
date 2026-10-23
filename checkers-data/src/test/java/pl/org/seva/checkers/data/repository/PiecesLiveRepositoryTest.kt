@@ -61,7 +61,7 @@ class PiecesLiveRepositoryTest {
             whiteMen,
             blackMen,
             whiteKings,
-            whiteMen,
+            blackKings,
             null,
         )
         given(piecesDatasource.load()).willReturn(setOf(piecesData))
@@ -122,6 +122,69 @@ class PiecesLiveRepositoryTest {
         assertEquals("", repository["childA"].parent)
         assertEquals(1, repository["grandChildA"].level)
         assertEquals(setOf("grandChildA"), repository.getLeaves().toSet())
+    }
+
+    @Test
+    fun `Given populated repository when reset then clears old leaves and restores initial root`() {
+        // Given
+        val realDataToDomain = PiecesDataToDomainMapper()
+        val realDomainToData = PiecesDomainToDataMapper()
+        val rootData = PiecesDataModel("root", "", listOf(0 to 5), listOf(1 to 2), emptyList(), emptyList(), null)
+        given(piecesDatasource.load()).willReturn(setOf(rootData))
+        val repository = PiecesLiveRepository(piecesDatasource, realDataToDomain, realDomainToData)
+        val child = PiecesDomainModel("child", "root", listOf(1 to 4), listOf(1 to 2), emptyList(), emptyList(), level = 1)
+        repository.addLeaf(child)
+
+        // When
+        repository.reset()
+
+        // Then
+        assertEquals("root", repository.root)
+        assertEquals(setOf("root"), repository.getLeaves().toSet())
+        assertTrue(repository.getImmediateMoves().none())
+    }
+
+    @Test
+    fun `Given level 1 children when find and getImmediateMoves then returns matching child`() {
+        // Given
+        val realDataToDomain = PiecesDataToDomainMapper()
+        val realDomainToData = PiecesDomainToDataMapper()
+        val rootData = PiecesDataModel("root", "", listOf(0 to 5), listOf(1 to 2), emptyList(), emptyList(), null)
+        given(piecesDatasource.load()).willReturn(setOf(rootData))
+        val repository = PiecesLiveRepository(piecesDatasource, realDataToDomain, realDomainToData)
+
+        val childA = PiecesDomainModel("childA", "root", listOf(1 to 4, 2 to 5), listOf(1 to 2), emptyList(), emptyList(), level = 1)
+        repository.addLeaf(childA)
+
+        val soughtReordered = PiecesDomainModel("sought", "", listOf(2 to 5, 1 to 4), listOf(1 to 2), emptyList(), emptyList())
+
+        // When
+        val foundId = repository.find(soughtReordered)
+        val immediateMoves = repository.getImmediateMoves().toList()
+
+        // Then
+        assertEquals("childA", foundId)
+        assertEquals(listOf(childA), immediateMoves)
+    }
+
+    @Test
+    fun `Given new state when updateState then replaces root and leaves`() {
+        // Given
+        val realDataToDomain = PiecesDataToDomainMapper()
+        val realDomainToData = PiecesDomainToDataMapper()
+        val rootData = PiecesDataModel("root", "", listOf(0 to 5), listOf(1 to 2), emptyList(), emptyList(), null)
+        given(piecesDatasource.load()).willReturn(setOf(rootData))
+        val repository = PiecesLiveRepository(piecesDatasource, realDataToDomain, realDomainToData)
+
+        val newState = PiecesDomainModel("newRoot", "oldParent", listOf(3 to 4), listOf(1 to 2), emptyList(), emptyList(), level = 3)
+
+        // When
+        repository.updateState(newState)
+
+        // Then
+        assertEquals("newRoot", repository.root)
+        assertEquals(0, repository["newRoot"].level)
+        assertEquals(setOf("newRoot"), repository.getLeaves(0).toSet())
     }
 
 }

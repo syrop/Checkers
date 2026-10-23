@@ -502,4 +502,58 @@ class BlackMoveUseCaseTest {
         assertTrue(position.isValidWhiteMove(0 to 0, 4 to 4))
     }
 
+    @Test
+    fun `Given white man normal diagonal step forward when isValidWhiteMove then returns true`() {
+        // Given
+        val position = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            whiteMen = listOf(2 to 5),
+            blackMen = emptyList(),
+            whiteKings = emptyList(),
+            blackKings = emptyList(),
+        )
+
+        // When / Then
+        assertTrue(position.isValidWhiteMove(2 to 5, 1 to 4))
+        assertTrue(position.isValidWhiteMove(2 to 5, 3 to 4))
+        assertFalse(position.isValidWhiteMove(2 to 5, 1 to 6))
+    }
+
+    @Test
+    fun `Given white man capturing black man when isValidWhiteMove then returns true only when black piece present`() {
+        // Given
+        val withBlack = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            whiteMen = listOf(2 to 5),
+            blackMen = listOf(3 to 4),
+            whiteKings = emptyList(),
+            blackKings = emptyList(),
+        )
+        val withoutBlack = withBlack.copy(blackMen = emptyList())
+
+        // When / Then
+        assertTrue(withBlack.isValidWhiteMove(2 to 5, 4 to 3))
+        assertFalse(withoutBlack.isValidWhiteMove(2 to 5, 4 to 3))
+    }
+
+    @Test
+    fun `Given occupied destination or out of bounds when isValidWhiteMove then returns false`() {
+        // Given
+        val position = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            whiteMen = listOf(0 to 5, 1 to 4),
+            blackMen = listOf(2 to 3),
+            whiteKings = listOf(3 to 4),
+            blackKings = emptyList(),
+        )
+
+        // When / Then
+        assertFalse(position.isValidWhiteMove(0 to 5, 1 to 4))
+        assertFalse(position.isValidWhiteMove(0 to 5, -1 to 4))
+        assertFalse(position.isValidWhiteMove(3 to 4, 0 to 1))
+    }
+
 }

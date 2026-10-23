@@ -3,10 +3,10 @@ package pl.org.seva.checkers.presentation.model
 data class PiecesViewState(
     val isLoading: Boolean = true,
     val pieces: PiecesPresentationModel = PiecesPresentationModel(
-        emptySet(),
-        emptySet(),
-        emptySet(),
-        emptySet(),
+        emptyList(),
+        emptyList(),
+        emptyList(),
+        emptyList(),
     ),
     val whiteWon: Boolean = false,
     val blackWon: Boolean = false,
