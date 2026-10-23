@@ -1,17 +1,17 @@
 package pl.org.seva.checkers.presentation
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.Job
+import pl.org.seva.checkers.domain.model.PiecesDomainModel
 import pl.org.seva.checkers.domain.usecase.BlackMoveUseCase
 import pl.org.seva.checkers.domain.usecase.FetchPiecesUseCase
-import pl.org.seva.checkers.domain.model.PiecesDomainModel
 import pl.org.seva.checkers.domain.usecase.ResetUseCase
 import pl.org.seva.checkers.domain.usecase.WhiteMoveUseCase
 import pl.org.seva.checkers.presentation.architecture.BasePresentation
+import pl.org.seva.checkers.presentation.architecture.UseCaseExecutorProvider
 import pl.org.seva.checkers.presentation.mapper.PiecesDomainToPresentationMapper
 import pl.org.seva.checkers.presentation.mapper.PiecesPresentationToDomainMapper
 import pl.org.seva.checkers.presentation.model.PiecesViewState
-import pl.org.seva.checkers.presentation.architecture.UseCaseExecutorProvider
 
 class GamePresentation(
     private val piecesDomainToPresentationMapper: PiecesDomainToPresentationMapper,
@@ -28,17 +28,21 @@ class GamePresentation(
     enum class LastMove { WHITE, BLACK, NONE }
 
     private var lastMove = LastMove.NONE
-    var whiteWon = MutableStateFlow(false)
-    var blackWon = MutableStateFlow(false)
-
-    private lateinit var storedState: PiecesViewState
+    private var storedState: PiecesViewState? = null
+    private var activeMoveJob: Job? = null
 
     override val initialViewState = PiecesViewState()
 
     private fun blackMove(coroutineScope: CoroutineScope) {
         updateViewState(viewState.value.loading())
         lastMove = LastMove.BLACK
-        execute(blackMoveUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
+        activeMoveJob = execute(
+            blackMoveUseCase,
+            coroutineScope,
+            Unit,
+            onSuccess = { presentPieces(it, coroutineScope) },
+            onException = { updateViewState { copy(isLoading = false) } },
+        )
     }
 
     fun removeWhite(x: Int, y: Int): Boolean {
@@ -56,15 +60,27 @@ class GamePresentation(
     }
 
     fun fetchPieces(coroutineScope: CoroutineScope) {
-        execute(fetchPiecesUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
+        execute(
+            fetchPiecesUseCase,
+            coroutineScope,
+            Unit,
+            onSuccess = { presentPieces(it, coroutineScope) },
+            onException = { updateViewState { copy(isLoading = false) } },
+        )
     }
 
     fun reset(coroutineScope: CoroutineScope) {
-        whiteWon.value = false
-        blackWon.value = false
+        activeMoveJob?.cancel()
+        activeMoveJob = null
+        lastMove = LastMove.NONE
         updateViewState(initialViewState)
-        execute(resetUseCase, coroutineScope, Unit, { presentPieces(it, coroutineScope) })
-        fetchPieces(coroutineScope)
+        execute(
+            resetUseCase,
+            coroutineScope,
+            Unit,
+            onSuccess = { presentPieces(it, coroutineScope) },
+            onException = { updateViewState { copy(isLoading = false) } },
+        )
     }
 
     fun storeState() {
@@ -72,43 +88,45 @@ class GamePresentation(
     }
 
     fun restoreState() {
-        updateViewState(storedState)
-    }
-
-    fun setWhiteWon() {
-        whiteWon.value = true
+        storedState?.let { updateViewState(it) }
     }
 
     fun addWhite(x: Int, y: Int, forceKing: Boolean, coroutineScope: CoroutineScope) {
-        updateViewState(if (forceKing || y == 0) {
-            viewState.value.addWhiteKing(x to y)
-        }
-        else {
-            viewState.value.addWhiteMan(x to y)
-        })
+        updateViewState(
+            if (forceKing || y == 0) {
+                viewState.value.addWhiteKing(x to y)
+            } else {
+                viewState.value.addWhiteMan(x to y)
+            }
+        )
         lastMove = LastMove.WHITE
-        execute(whiteMoveUseCase, coroutineScope, piecesPresentationToDomainMapper.toDomain(viewState.value.pieces), { presentPieces(it, coroutineScope) })
+        activeMoveJob?.cancel()
+        activeMoveJob = execute(
+            whiteMoveUseCase,
+            coroutineScope,
+            piecesPresentationToDomainMapper.toDomain(viewState.value.pieces),
+            onSuccess = { presentPieces(it, coroutineScope) },
+            onException = { updateViewState { copy(isLoading = false) } },
+        )
     }
 
-    private fun whiteWon() = viewState.value.pieces.blackMen.toSet().isEmpty() &&
-            viewState.value.pieces.blackKings.toSet().isEmpty()
+    private fun whiteWon() = viewState.value.pieces.blackMen.none() &&
+            viewState.value.pieces.blackKings.none()
 
-    private fun blackWon() = viewState.value.pieces.whiteMen.toSet().isEmpty() &&
-            viewState.value.pieces.whiteKings.toSet().isEmpty()
+    private fun blackWon() = viewState.value.pieces.whiteMen.none() &&
+            viewState.value.pieces.whiteKings.none()
 
     private fun presentPieces(pieces: PiecesDomainModel, coroutineScope: CoroutineScope) {
         updateViewState { withPieces(piecesDomainToPresentationMapper.toPresentation(pieces)) }
         if (lastMove == LastMove.WHITE) {
             if (whiteWon()) {
-                whiteWon.value = true
-            }
-            else {
+                updateViewState { copy(whiteWon = true) }
+            } else {
                 updateViewState(viewState.value.loading())
                 blackMove(coroutineScope)
             }
-        }
-        else if (lastMove == LastMove.BLACK && blackWon()) {
-            blackWon.value = true
+        } else if (lastMove == LastMove.BLACK && blackWon()) {
+            updateViewState { copy(blackWon = true) }
         }
     }
 

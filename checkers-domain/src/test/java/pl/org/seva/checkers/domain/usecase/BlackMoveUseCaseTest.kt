@@ -470,5 +470,36 @@ class BlackMoveUseCaseTest {
         assertEquals(1, actualResult)
     }
 
+    @Test
+    fun `Given white king blocked by white man when isValidWhiteMove then returns false`() {
+        // Given
+        val position = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            whiteMen = listOf(2 to 2),
+            blackMen = emptyList(),
+            whiteKings = listOf(0 to 0),
+            blackKings = emptyList(),
+        )
+
+        // When / Then
+        assertFalse(position.isValidWhiteMove(0 to 0, 4 to 4))
+    }
+
+    @Test
+    fun `Given white king capturing single black man at end of diagonal when isValidWhiteMove then returns true`() {
+        // Given
+        val position = PiecesDomainModel(
+            UUID.randomUUID().toString(),
+            "",
+            whiteMen = emptyList(),
+            blackMen = listOf(3 to 3),
+            whiteKings = listOf(0 to 0),
+            blackKings = emptyList(),
+        )
+
+        // When / Then
+        assertTrue(position.isValidWhiteMove(0 to 0, 4 to 4))
+    }
 
 }

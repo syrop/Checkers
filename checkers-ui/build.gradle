@@ -1,27 +1,25 @@
 plugins {
-    id 'com.android.library'
-    id 'com.google.devtools.ksp'
-    id 'com.google.dagger.hilt.android'
-    id 'org.jetbrains.kotlin.plugin.compose'
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace 'pl.org.seva.checkers.ui'
-    compileSdk=37
+    compileSdk = 37
 
     defaultConfig {
-        minSdk 21
-        targetSdk 37
+        minSdk = 26
     }
 
     buildFeatures {
-        viewBinding true
-        compose true
+        compose = true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
@@ -35,25 +33,20 @@ kotlin {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.8.0'
-    implementation 'com.google.android.material:material:1.14.0'
+    implementation libs.androidx.appcompat
+    implementation libs.google.material
 
-    implementation "com.google.dagger:hilt-android:2.60.1"
-    implementation 'androidx.navigation:navigation-ui-ktx:2.10.0'
-    ksp "com.google.dagger:hilt-compiler:2.60.1"
-    implementation 'androidx.fragment:fragment-ktx:1.9.0'
+    implementation libs.hilt.android
+    ksp libs.hilt.compiler
 
-    implementation 'androidx.compose.ui:ui:1.12.0'
-    implementation 'androidx.compose.ui:ui-tooling:1.12.0'
-    implementation 'androidx.compose.foundation:foundation:1.12.0'
-    implementation 'androidx.compose.material:material:1.12.0'
-    implementation 'androidx.compose.material:material-icons-core:1.7.8'
-    implementation 'androidx.compose.material:material-icons-extended:1.7.8'
-    implementation 'androidx.activity:activity-compose:1.13.0'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.12.0'
-    implementation 'androidx.compose.runtime:runtime-rxjava2:1.12.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.10.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.10.0'
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.tooling
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.material.icons.core
 
     implementation project(':checkers-presentation')
 }

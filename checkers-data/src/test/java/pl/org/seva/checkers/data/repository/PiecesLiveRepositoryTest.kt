@@ -96,4 +96,32 @@ class PiecesLiveRepositoryTest {
         assertEquals(expectedException.message, actualException?.message)
     }
 
+    @Test
+    fun `Given tree when prune then keeps chosen branch as new root and deletes siblings`() {
+        // Given
+        val realDataToDomain = PiecesDataToDomainMapper()
+        val realDomainToData = PiecesDomainToDataMapper()
+        val rootData = PiecesDataModel("root", "", listOf(0 to 5), listOf(1 to 2), emptyList(), emptyList(), null)
+        given(piecesDatasource.load()).willReturn(setOf(rootData))
+        val repository = PiecesLiveRepository(piecesDatasource, realDataToDomain, realDomainToData)
+
+        val childA = PiecesDomainModel("childA", "root", listOf(0 to 5), listOf(0 to 3), emptyList(), emptyList(), level = 1)
+        val childB = PiecesDomainModel("childB", "root", listOf(0 to 5), listOf(2 to 3), emptyList(), emptyList(), level = 1)
+        val grandChildA = PiecesDomainModel("grandChildA", "childA", listOf(1 to 4), listOf(0 to 3), emptyList(), emptyList(), level = 2)
+
+        repository.addLeaf(childA)
+        repository.addLeaf(childB)
+        repository.addLeaf(grandChildA)
+
+        // When
+        repository.prune("childA")
+
+        // Then
+        assertEquals("childA", repository.root)
+        assertEquals(0, repository["childA"].level)
+        assertEquals("", repository["childA"].parent)
+        assertEquals(1, repository["grandChildA"].level)
+        assertEquals(setOf("grandChildA"), repository.getLeaves().toSet())
+    }
+
 }

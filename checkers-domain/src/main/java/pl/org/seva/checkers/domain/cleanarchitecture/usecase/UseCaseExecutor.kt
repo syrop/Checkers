@@ -1,6 +1,7 @@
 package pl.org.seva.checkers.domain.cleanarchitecture.usecase
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.DomainException
 import pl.org.seva.checkers.domain.cleanarchitecture.exception.UnknownDomainException
@@ -13,20 +14,17 @@ class UseCaseExecutor {
         coroutineScope: CoroutineScope,
         value: INPUT,
         onSuccess: (OUTPUT) -> Unit = {},
-        onException: (DomainException) -> Unit = {}
-    ) {
-        coroutineScope.launch {
-            try {
-                useCase.execute(value, coroutineScope, onSuccess)
-            }
-            catch (ignore: CancellationException) {
-            }
-            catch (throwable: Throwable) {
-                onException(
-                    (throwable as? DomainException)
-                        ?: UnknownDomainException(throwable)
-                )
-            }
+        onException: (DomainException) -> Unit = {},
+    ): Job = coroutineScope.launch {
+        try {
+            useCase.execute(value, coroutineScope, onSuccess)
+        } catch (cancellationException: CancellationException) {
+            throw cancellationException
+        } catch (throwable: Throwable) {
+            onException(
+                (throwable as? DomainException)
+                    ?: UnknownDomainException(throwable)
+            )
         }
     }
 

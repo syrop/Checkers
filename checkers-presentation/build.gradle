@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
-    id 'org.jetbrains.kotlin.jvm'
-    id 'com.google.devtools.ksp'
+    alias(libs.plugins.kotlin.jvm)
 }
 
 java {
@@ -14,13 +13,11 @@ kotlin {
 }
 
 dependencies {
-    ksp "com.google.dagger:hilt-compiler:2.60.1"
-
     implementation project(':checkers-domain')
+    implementation libs.kotlinx.coroutines.core
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation "org.mockito.kotlin:mockito-kotlin:6.3.0"
-    testImplementation "org.mockito:mockito-inline:5.2.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0'
+    testImplementation libs.junit
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.mockito.inline
+    testImplementation libs.kotlinx.coroutines.test
 }

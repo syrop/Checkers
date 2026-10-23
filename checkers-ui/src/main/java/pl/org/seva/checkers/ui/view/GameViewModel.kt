@@ -8,17 +8,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val presentation: GamePresentation
+    private val presentation: GamePresentation,
 ) : ViewModel() {
 
     val viewState
         get() = presentation.viewState
 
-    val whiteWon
-        get() = presentation.whiteWon
-
-    val blackWon
-        get() = presentation.blackWon
+    init {
+        fetchPieces()
+    }
 
     fun removeBlack(pair: Pair<Int, Int>) = presentation.removeBlack(pair)
 
@@ -29,8 +27,6 @@ class GameViewModel @Inject constructor(
     fun restoreState() = presentation.restoreState()
 
     fun addWhite(x: Int, y: Int, king: Boolean) = presentation.addWhite(x, y, king, viewModelScope)
-
-    fun setWhiteWon() = presentation.setWhiteWon()
 
     fun fetchPieces() = presentation.fetchPieces(viewModelScope)
 
